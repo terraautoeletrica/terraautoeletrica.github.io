@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aprovação de OS — Terra Auto Elétrica</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { margin: 0; background: #f1f5f9; color: #0f172a; padding: 20px; }
+    .container { max-width: 560px; margin: 24px auto; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,.08); }
+    .header { background: #0f172a; color: #fff; padding: 22px 24px; }
+    .header h1 { margin: 0; font-size: 1.25rem; color: #facc15; }
+    .header p { margin: 4px 0 0; font-size: 0.9rem; color: #cbd5e1; }
+    .content { padding: 24px; }
+    .info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; font-size: 0.92rem; line-height: 1.5; }
+    .info-row { margin-bottom: 6px; }
+    .info-row:last-child { margin-bottom: 0; }
+    .valor { font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-top: 8px; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+    .b-aguardando { background: #fef3c7; color: #b45309; }
+    .b-aprovada { background: #dcfce7; color: #15803d; }
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #334155; }
+    textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; margin-bottom: 14px; }
+    button.btn-aprovar { width: 100%; background: #16a34a; color: #fff; border: none; padding: 13px 18px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+    button.btn-aprovar:hover { background: #15803d; }
+    button.btn-aprovar:disabled { background: #94a3b8; cursor: not-allowed; }
+    .msg-ok { background: #dcfce7; color: #166534; padding: 12px 14px; border-radius: 8px; margin-top: 14px; font-size: 0.9rem; font-weight: 600; }
+    .msg-err { background: #fee2e2; color: #991b1b; padding: 12px 14px; border-radius: 8px; margin-top: 14px; font-size: 0.9rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>TERRA AUTO ELÉTRICA</h1>
+      <p>Confirmação e Aprovação de Ordem de Serviço</p>
+    </div>
+    <div class="content" id="areaOS">
+      <p>Carregando dados da Ordem de Serviço...</p>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    let osCarregada = null;
+
+    function formatarItens(itensJson, fallbackTexto) {
+      if (Array.isArray(itensJson) && itensJson.length > 0) {
+        return itensJson.map(item => {
+          if (typeof item === "string") return item;
+          const desc = item.descricao || "";
+          const val = item.valor !== undefined && item.valor !== null && item.valor !== ""
+            ? ` — R$ ${Number(item.valor).toFixed(2)}`
+            : "";
+          return `${desc}${val}`;
+        }).join("<br>");
+      }
+      return fallbackTexto || "Serviço elétrico automotivo";
+    }
+
+    async function carregarOSPublica() {
+      const container = document.getElementById("areaOS");
+
+      if (!token) {
+        container.innerHTML = `<div class="msg-err">Link inválido: token da Ordem de Serviço não encontrado.</div>`;
+        return;
+      }
+
+      const { data, error } = await supabaseClient
+        .from("ordens_servico")
+        .select("*, clientes_veiculos(nome_cliente, placa, modelo_veiculo, ano)")
+        .eq("token_publico", token)
+        .single();
+
+      if (error || !data) {
+        container.innerHTML = `<div class="msg-err">Ordem de Serviço não encontrada ou link expirado.</div>`;
+        return;
+      }
+
+      osCarregada = data;
+      const v = data.clientes_veiculos || {};
+      const jaAprovada = data.status === "Aprovada";
+      const badgeClass = jaAprovada ? "b-aprovada" : "b-aguardando";
+      const itensHtml = formatarItens(data.itens_json, data.descricao_defeito);
+
+      container.innerHTML = `
+        <div class="info-box">
+          <div class="info-row"><strong>OS:</strong> #${data.numero_os}  |  <span class="badge ${badgeClass}">${data.status}</span></div>
+          <div class="info-row"><strong>Cliente:</strong> ${v.nome_cliente || "-"}</div>
+          <div class="info-row"><strong>Veículo:</strong> ${v.modelo_veiculo || "-"} ${v.ano ? `(${v.ano})` : ""} — <strong>Placa:</strong> ${v.placa || "-"}</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-row"><strong>Diagnóstico / Defeito:</strong><br>${data.descricao_defeito || "-"}</div>
+          <div class="info-row" style="margin-top:10px"><strong>Peças e Serviços:</strong><br>${itensHtml}</div>
+          <div class="valor">Valor Total: R$ ${Number(data.valor_total || 0).toFixed(2)}</div>
+        </div>
+
+        ${
+          jaAprovada
+            ? `<div class="msg-ok">Esta Ordem de Serviço já foi aprovada anteriormente. A Terra Auto Elétrica agradece a confiança!</div>`
+            : `
+              <label for="obsCliente">Observação do cliente (opcional)</label>
+              <textarea id="obsCliente" rows="2" placeholder="Ex: Aprovado, pode iniciar o serviço."></textarea>
+              <button class="btn-aprovar" id="btnAprovar" onclick="aprovarServico()">Aprovar Ordem de Serviço</button>
+              <div id="retornoAcao"></div>
+            `
+        }
+      `;
+    }
+
+    async function aprovarServico() {
+      if (!osCarregada || !token) return;
+      const btn = document.getElementById("btnAprovar");
+      const retorno = document.getElementById("retornoAcao");
+      const obs = (document.getElementById("obsCliente")?.value || "").trim();
+
+      btn.disabled = true;
+      btn.textContent = "Confirmando aprovação...";
+
+      const { error: errUpdate } = await supabaseClient
+        .from("ordens_servico")
+        .update({ status: "Aprovada" })
+        .eq("id", osCarregada.id)
+        .eq("token_publico", token);
+
+      if (errUpdate) {
+        btn.disabled = false;
+        btn.textContent = "Aprovar Ordem de Serviço";
+        retorno.innerHTML = `<div class="msg-err">Não foi possível registrar a aprovação: ${errUpdate.message}</div>`;
+        return;
+      }
+
+      const v = osCarregada.clientes_veiculos || {};
+      const textoHist = obs
+        ? `OS #${osCarregada.numero_os} aprovada pelo cliente (${v.nome_cliente || "Cliente"}). Obs: ${obs}`
+        : `OS #${osCarregada.numero_os} aprovada pelo cliente (${v.nome_cliente || "Cliente"}) via link digital.`;
+
+      await supabaseClient.from("historico_os").insert({
+        os_id: osCarregada.id,
+        tipo_evento: "Aprovação Cliente",
+        mensagem: textoHist
+      });
+
+      await carregarOSPublica();
+    }
+
+    carregarOSPublica();
+  </script>
+</body>
+</html>
