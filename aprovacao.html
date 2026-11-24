@@ -9,9 +9,10 @@
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
     body { margin: 0; background: #f1f5f9; color: #0f172a; padding: 20px; }
     .container { max-width: 560px; margin: 24px auto; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,.08); }
-    .header { background: #0f172a; color: #fff; padding: 22px 24px; }
-    .header h1 { margin: 0; font-size: 1.25rem; color: #facc15; }
-    .header p { margin: 4px 0 0; font-size: 0.9rem; color: #cbd5e1; }
+    .header { background: #0f172a; color: #fff; padding: 22px 24px; display: flex; align-items: center; gap: 16px; }
+    .header img.logo { width: 64px; height: 64px; object-fit: contain; border-radius: 8px; flex-shrink: 0; }
+    .header-texto h1 { margin: 0; font-size: 1.25rem; color: #facc15; }
+    .header-texto p { margin: 4px 0 0; font-size: 0.9rem; color: #cbd5e1; }
     .content { padding: 24px; }
     .info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; font-size: 0.92rem; line-height: 1.5; }
     .info-row { margin-bottom: 6px; }
@@ -32,8 +33,11 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>TERRA AUTO ELÉTRICA</h1>
-      <p>Confirmação e Aprovação de Ordem de Serviço</p>
+      <img src="./logo.png" alt="Logo Terra Auto Elétrica" class="logo" />
+      <div class="header-texto">
+        <h1>TERRA AUTO ELÉTRICA</h1>
+        <p>Confirmação e Aprovação de Ordem de Serviço</p>
+      </div>
     </div>
     <div class="content" id="areaOS">
       <p>Carregando dados da Ordem de Serviço...</p>
