@@ -3,164 +3,448 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aprovação de OS — Terra Auto Elétrica</title>
-
-  <!-- Prévia do link ao enviar pelo WhatsApp -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Terra Auto Elétrica" />
-  <meta property="og:title" content="Aprovação de Ordem de Serviço — Terra Auto Elétrica" />
-  <meta property="og:description" content="Confira os detalhes do orçamento e aprove sua Ordem de Serviço online." />
-  <meta property="og:url" content="https://terraautoeletrica.github.io/aprovacao.html" />
-  <meta property="og:image" content="https://terraautoeletrica.github.io/logo.png" />
-
+  <title>TerraOS — Terra Auto Elétrica</title>
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#0f172a" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-    body { margin: 0; background: #f1f5f9; color: #0f172a; padding: 20px; }
-    .container { max-width: 560px; margin: 24px auto; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,.08); }
-    .header { background: #0f172a; color: #fff; padding: 22px 24px; display: flex; align-items: center; gap: 16px; }
-    .header img.logo { width: 64px; height: 64px; object-fit: contain; border-radius: 8px; flex-shrink: 0; }
-    .header-texto h1 { margin: 0; font-size: 1.25rem; color: #facc15; }
-    .header-texto p { margin: 4px 0 0; font-size: 0.9rem; color: #cbd5e1; }
-    .content { padding: 24px; }
-    .info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; font-size: 0.92rem; line-height: 1.5; }
-    .info-row { margin-bottom: 6px; }
-    .info-row:last-child { margin-bottom: 0; }
-    .valor { font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-top: 8px; }
-    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+    body { margin: 0; background: #f1f5f9; color: #0f172a; }
+    .login-box { max-width: 380px; margin: 80px auto; background: #fff; padding: 28px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+    .app { display: none; min-height: 100vh; }
+    .sidebar { width: 240px; background: #0f172a; color: #fff; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .sidebar h2 { font-size: 1.05rem; margin: 0 0 12px; color: #facc15; line-height: 1.3; }
+    .nav-btn { background: transparent; color: #cbd5e1; border: none; text-align: left; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; }
+    .nav-btn.active, .nav-btn:hover { background: #1e293b; color: #fff; }
+    .main { flex: 1; padding: 24px 32px; max-width: 1300px; }
+    .card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #334155; }
+    input, select, textarea { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; margin-bottom: 12px; }
+    button.btn { background: #0284c7; color: #fff; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    button.btn:hover { background: #0369a1; }
+    button.btn-green { background: #16a34a; }
+    button.btn-green:hover { background: #15803d; }
+    button.btn-amber { background: #d97706; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; }
+    .badge { padding: 4px 8px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; display: inline-block; }
+    .b-agendado { background: #e0f2fe; color: #0369a1; }
     .b-aguardando { background: #fef3c7; color: #b45309; }
     .b-aprovada { background: #dcfce7; color: #15803d; }
-    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #334155; }
-    textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; margin-bottom: 14px; }
-    button.btn-aprovar { width: 100%; background: #16a34a; color: #fff; border: none; padding: 13px 18px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; }
-    button.btn-aprovar:hover { background: #15803d; }
-    button.btn-aprovar:disabled { background: #94a3b8; cursor: not-allowed; }
-    .msg-ok { background: #dcfce7; color: #166534; padding: 12px 14px; border-radius: 8px; margin-top: 14px; font-size: 0.9rem; font-weight: 600; }
-    .msg-err { background: #fee2e2; color: #991b1b; padding: 12px 14px; border-radius: 8px; margin-top: 14px; font-size: 0.9rem; font-weight: 600; }
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); align-items: center; justify-content: center; padding: 20px; }
+    .modal { background: #fff; border-radius: 12px; max-width: 650px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 24px; }
+    .hist-item { background: #f8fafc; border-left: 4px solid #0284c7; padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 0.88rem; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <img src="./logo.png" alt="Logo Terra Auto Elétrica" class="logo" />
-      <div class="header-texto">
-        <h1>TERRA AUTO ELÉTRICA</h1>
-        <p>Confirmação e Aprovação de Ordem de Serviço</p>
+
+  <!-- TELA DE LOGIN DO GERENTE -->
+  <div id="loginScreen" class="login-box">
+    <h2 style="margin-top:0">Terra Auto Elétrica</h2>
+    <p style="font-size:0.88rem;color:#64748b">Acesso do Gerente — Entre com o e-mail e senha cadastrados no Supabase.</p>
+    <label>E-mail</label>
+    <input type="email" id="loginEmail" placeholder="gerente@terraautoeletrica.com" />
+    <label>Senha</label>
+    <input type="password" id="loginPass" placeholder="••••••••" />
+    <button class="btn" style="width:100%" onclick="fazerLogin()">Entrar no Sistema</button>
+    <p id="loginMsg" style="color:#dc2626;font-size:0.85rem;margin-top:10px"></p>
+  </div>
+
+  <!-- APLICAÇÃO PRINCIPAL (DESKTOP) -->
+  <div id="appScreen" class="app">
+    <aside class="sidebar">
+      <h2>TERRA AUTO ELÉTRICA<br><small style="color:#cbd5e1;font-weight:500">Painel TerraOS</small></h2>
+      <button class="nav-btn active" onclick="trocarAba('agenda', this)">📅 Agenda de Serviços</button>
+      <button class="nav-btn" onclick="trocarAba('os', this)">🔧 Ordens de Serviço</button>
+      <button class="nav-btn" onclick="trocarAba('clientes', this)">🚗 Clientes & Veículos</button>
+      <div style="margin-top:auto">
+        <button class="nav-btn" style="color:#fca5a5" onclick="sair()">Sair</button>
       </div>
-    </div>
-    <div class="content" id="areaOS">
-      <p>Carregando dados da Ordem de Serviço...</p>
+    </aside>
+
+    <main class="main">
+      <!-- ABA 1: AGENDA -->
+      <section id="tab-agenda">
+        <h1>Agenda de Serviços — Terra Auto Elétrica</h1>
+        <div class="card">
+          <h3>Novo Agendamento</h3>
+          <div class="grid-3">
+            <div>
+              <label>Veículo / Cliente</label>
+              <select id="agVeiculo"></select>
+            </div>
+            <div>
+              <label>Data e Hora</label>
+              <input type="datetime-local" id="agDataHora" />
+            </div>
+            <div>
+              <label>Serviço Previsto</label>
+              <input type="text" id="agServico" placeholder="Ex: Revisão alternador / bateria" />
+            </div>
+          </div>
+          <label>Observações do Gerente</label>
+          <input type="text" id="agObs" placeholder="Ex: Cliente traz peça / Prioridade manhã" />
+          <button class="btn" onclick="salvarAgendamento()">Salvar na Agenda</button>
+        </div>
+
+        <div class="card">
+          <h3>Serviços Agendados</h3>
+          <table>
+            <thead>
+              <tr><th>Data/Hora</th><th>Placa / Veículo</th><th>Cliente</th><th>Serviço</th><th>Status</th><th>Ação</th></tr>
+            </thead>
+            <tbody id="listaAgenda"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ABA 2: ORDENS DE SERVIÇO -->
+      <section id="tab-os" style="display:none">
+        <h1>Ordens de Serviço — Terra Auto Elétrica</h1>
+        <div class="card">
+          <h3>Emitir Nova Ordem de Serviço</h3>
+          <div class="grid-2">
+            <div>
+              <label>Veículo / Cliente</label>
+              <select id="osVeiculo"></select>
+            </div>
+            <div>
+              <label>Valor Total (R$)</label>
+              <input type="number" step="0.01" id="osValor" placeholder="Ex: 350.00" />
+            </div>
+          </div>
+          <label>Defeito Relatado / Diagnóstico</label>
+          <textarea id="osDefeito" rows="2" placeholder="Ex: Carro sem carga no alternador, luz da bateria acesa no painel."></textarea>
+          <label>Peças e Mão de Obra Detalhados</label>
+          <textarea id="osItens" rows="2" placeholder="Ex: Reparo placa de diodos + rolamentos (R$ 190,00) | Mão de obra revisão alternador (R$ 160,00)"></textarea>
+          <button class="btn btn-green" onclick="criarOS()">Salvar OS e Gerar Link WhatsApp</button>
+        </div>
+
+        <div class="card">
+          <h3>Ordens de Serviço Emitidas</h3>
+          <table>
+            <thead>
+              <tr><th>Nº OS</th><th>Veículo / Cliente</th><th>Valor</th><th>Status</th><th>WhatsApp / Link</th><th>Histórico</th></tr>
+            </thead>
+            <tbody id="listaOS"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ABA 3: CLIENTES & VEÍCULOS -->
+      <section id="tab-clientes" style="display:none">
+        <h1>Clientes & Veículos — Terra Auto Elétrica</h1>
+        <div class="card">
+          <h3>Cadastrar Cliente e Veículo</h3>
+          <div class="grid-3">
+            <div><label>Nome do Cliente</label><input type="text" id="clNome" placeholder="Ex: João da Silva" /></div>
+            <div><label>WhatsApp (com DDD)</label><input type="text" id="clFone" placeholder="Ex: 43999998888" /></div>
+            <div><label>Placa do Veículo</label><input type="text" id="clPlaca" placeholder="Ex: ABC1D23" style="text-transform:uppercase" /></div>
+            <div><label>Modelo / Marca</label><input type="text" id="clModelo" placeholder="Ex: Fiat Strada 1.4" /></div>
+            <div><label>Ano</label><input type="text" id="clAno" placeholder="Ex: 2018" /></div>
+            <div><label>KM Atual</label><input type="text" id="clKm" placeholder="Ex: 112.400" /></div>
+          </div>
+          <button class="btn" onclick="salvarClienteVeiculo()">Cadastrar Cliente e Veículo</button>
+        </div>
+
+        <div class="card">
+          <label>Buscar por Placa ou Cliente</label>
+          <input type="text" id="buscaPlaca" placeholder="Digite a placa ou nome para filtrar..." oninput="renderClientes()" />
+          <table>
+            <thead>
+              <tr><th>Placa</th><th>Veículo</th><th>Cliente</th><th>WhatsApp</th><th>KM</th></tr>
+            </thead>
+            <tbody id="listaClientes"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL HISTÓRICO E MENSAGENS DA OS -->
+  <div id="modalHist" class="modal-bg" onclick="if(event.target===this) fecharModal()">
+    <div class="modal">
+      <h3 id="modalTitulo">Histórico da OS</h3>
+      <div id="modalHistoricoLista"></div>
+      <hr style="margin:16px 0;border:none;border-top:1px solid #e2e8f0" />
+      <label>Registrar Nota ou Resposta do Cliente no Histórico</label>
+      <input type="text" id="novaNotaHist" placeholder="Ex: Cliente confirmou por telefone / pedirá peça original" />
+      <button class="btn" onclick="adicionarNotaHistorico()">Salvar no Histórico</button>
+      <button class="btn" style="background:#64748b;margin-left:8px" onclick="fecharModal()">Fechar</button>
     </div>
   </div>
 
   <script src="./config.js"></script>
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-    let osCarregada = null;
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
 
-    function formatarItens(itensJson, fallbackTexto) {
-      if (Array.isArray(itensJson) && itensJson.length > 0) {
-        return itensJson.map(item => {
-          if (typeof item === "string") return item;
-          const desc = item.descricao || "";
-          const val = item.valor !== undefined && item.valor !== null && item.valor !== ""
-            ? ` — R$ ${Number(item.valor).toFixed(2)}`
-            : "";
-          return `${desc}${val}`;
-        }).join("<br>");
+    let clientesCache = [];
+    let osAtualModal = null;
+
+    async function fazerLogin() {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPass").value;
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        document.getElementById("loginMsg").textContent = "Falha no login: " + error.message;
+      } else {
+        iniciarApp();
       }
-      return fallbackTexto || "Serviço elétrico automotivo";
     }
 
-    async function carregarOSPublica() {
-      const container = document.getElementById("areaOS");
+    async function sair() {
+      await supabaseClient.auth.signOut();
+      location.reload();
+    }
 
-      if (!token) {
-        container.innerHTML = `<div class="msg-err">Link inválido: token da Ordem de Serviço não encontrado.</div>`;
-        return;
+    async function iniciarApp() {
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("appScreen").style.display = "flex";
+      await carregarClientes();
+      await carregarAgenda();
+      await carregarOS();
+    }
+
+    supabaseClient.auth.getSession().then(({ data }) => {
+      if (data.session) iniciarApp();
+    });
+
+    function trocarAba(aba, btn) {
+      ["agenda", "os", "clientes"].forEach(t => {
+        document.getElementById("tab-" + t).style.display = t === aba ? "block" : "none";
+      });
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+    }
+
+    async function salvarClienteVeiculo() {
+      const payload = {
+        nome_cliente: document.getElementById("clNome").value.trim(),
+        telefone_whatsapp: document.getElementById("clFone").value.replace(/\D/g, ""),
+        placa: document.getElementById("clPlaca").value.trim().toUpperCase(),
+        modelo_veiculo: document.getElementById("clModelo").value.trim(),
+        ano: document.getElementById("clAno").value.trim(),
+        km_atual: document.getElementById("clKm").value.trim()
+      };
+      if (!payload.nome_cliente || !payload.telefone_whatsapp || !payload.placa || !payload.modelo_veiculo) {
+        return alert("Preencha Nome, WhatsApp, Placa e Modelo.");
       }
+      const { error } = await supabaseClient.from("clientes_veiculos").insert(payload);
+      if (error) return alert("Erro: " + error.message);
+      ["clNome", "clFone", "clPlaca", "clModelo", "clAno", "clKm"].forEach(id => document.getElementById(id).value = "");
+      await carregarClientes();
+      alert("Cliente e veículo cadastrados!");
+    }
 
-      const { data, error } = await supabaseClient
+    async function carregarClientes() {
+      const { data } = await supabaseClient.from("clientes_veiculos").select("*").order("criado_em", { ascending: false });
+      clientesCache = data || [];
+      renderClientes();
+      const opcoes = clientesCache.map(c => `<option value="${c.id}">${c.placa} - ${c.modelo_veiculo} (${c.nome_cliente})</option>`).join("");
+      document.getElementById("agVeiculo").innerHTML = opcoes;
+      document.getElementById("osVeiculo").innerHTML = opcoes;
+    }
+
+    function renderClientes() {
+      const filtro = (document.getElementById("buscaPlaca")?.value || "").toLowerCase();
+      const filtrados = clientesCache.filter(c =>
+        c.placa.toLowerCase().includes(filtro) ||
+        c.nome_cliente.toLowerCase().includes(filtro) ||
+        c.modelo_veiculo.toLowerCase().includes(filtro)
+      );
+      document.getElementById("listaClientes").innerHTML = filtrados.map(c => `
+        <tr>
+          <td><strong>${c.placa}</strong></td>
+          <td>${c.modelo_veiculo} ${c.ano ? "(" + c.ano + ")" : ""}</td>
+          <td>${c.nome_cliente}</td>
+          <td>${c.telefone_whatsapp}</td>
+          <td>${c.km_atual || "-"}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function salvarAgendamento() {
+      const veiculo_id = document.getElementById("agVeiculo").value;
+      const data_hora = document.getElementById("agDataHora").value;
+      const tipo_servico = document.getElementById("agServico").value.trim();
+      const observacao_gerente = document.getElementById("agObs").value.trim();
+      if (!veiculo_id || !data_hora || !tipo_servico) return alert("Preencha veículo, data/hora e serviço.");
+
+      const { error } = await supabaseClient.from("agendamentos").insert({
+        veiculo_id, data_hora: new Date(data_hora).toISOString(), tipo_servico, observacao_gerente
+      });
+      if (error) return alert("Erro: " + error.message);
+      document.getElementById("agServico").value = "";
+      document.getElementById("agObs").value = "";
+      await carregarAgenda();
+    }
+
+    async function carregarAgenda() {
+      const { data } = await supabaseClient
+        .from("agendamentos")
+        .select("*, clientes_veiculos(nome_cliente, placa, modelo_veiculo)")
+        .order("data_hora", { ascending: true });
+
+      document.getElementById("listaAgenda").innerHTML = (data || []).map(a => {
+        const dt = new Date(a.data_hora).toLocaleString("pt-BR");
+        const v = a.clientes_veiculos || {};
+        return `
+          <tr>
+            <td>${dt}</td>
+            <td><strong>${v.placa || ""}</strong> - ${v.modelo_veiculo || ""}</td>
+            <td>${v.nome_cliente || ""}</td>
+            <td>${a.tipo_servico}</td>
+            <td><span class="badge b-agendado">${a.status}</span></td>
+            <td>
+              ${a.status === "Agendado"
+                ? `<button class="btn btn-amber" style="padding:6px 10px;font-size:0.82rem" onclick="converterEmOS('${a.id}', '${a.veiculo_id}', '${a.tipo_servico.replace(/'/g, "")}')">Virar OS</button>`
+                : "-"}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function converterEmOS(agId, veiculoId, servico) {
+      trocarAba("os", document.querySelectorAll(".nav-btn")[1]);
+      document.getElementById("osVeiculo").value = veiculoId;
+      document.getElementById("osDefeito").value = servico;
+      document.getElementById("osVeiculo").dataset.agendamentoId = agId;
+    }
+
+    async function criarOS() {
+      const selectVeic = document.getElementById("osVeiculo");
+      const veiculo_id = selectVeic.value;
+      const agendamento_id = selectVeic.dataset.agendamentoId || null;
+      const valor_total = parseFloat(document.getElementById("osValor").value || "0");
+      const descricao_defeito = document.getElementById("osDefeito").value.trim();
+      const itensTexto = document.getElementById("osItens").value.trim();
+
+      if (!veiculo_id || !descricao_defeito) return alert("Selecione o veículo e informe o defeito/serviço.");
+
+      const { data: osCriada, error } = await supabaseClient
         .from("ordens_servico")
-        .select("*, clientes_veiculos(nome_cliente, placa, modelo_veiculo, ano)")
-        .eq("token_publico", token)
+        .insert({
+          veiculo_id,
+          agendamento_id,
+          descricao_defeito,
+          itens_json: [{ descricao: itensTexto || descricao_defeito, valor: valor_total }],
+          valor_total
+        })
+        .select()
         .single();
 
-      if (error || !data) {
-        container.innerHTML = `<div class="msg-err">Ordem de Serviço não encontrada ou link expirado.</div>`;
-        return;
+      if (error) return alert("Erro ao criar OS: " + error.message);
+
+      if (agendamento_id) {
+        await supabaseClient.from("agendamentos").update({ status: "Convertido em OS" }).eq("id", agendamento_id);
+        delete selectVeic.dataset.agendamentoId;
+        await carregarAgenda();
       }
-
-      osCarregada = data;
-      const v = data.clientes_veiculos || {};
-      const jaAprovada = data.status === "Aprovada";
-      const badgeClass = jaAprovada ? "b-aprovada" : "b-aguardando";
-      const itensHtml = formatarItens(data.itens_json, data.descricao_defeito);
-
-      container.innerHTML = `
-        <div class="info-box">
-          <div class="info-row"><strong>OS:</strong> #${data.numero_os} &nbsp;|&nbsp; <span class="badge ${badgeClass}">${data.status}</span></div>
-          <div class="info-row"><strong>Cliente:</strong> ${v.nome_cliente || "-"}</div>
-          <div class="info-row"><strong>Veículo:</strong> ${v.modelo_veiculo || "-"} ${v.ano ? `(${v.ano})` : ""} — <strong>Placa:</strong> ${v.placa || "-"}</div>
-        </div>
-
-        <div class="info-box">
-          <div class="info-row"><strong>Diagnóstico / Defeito:</strong><br>${data.descricao_defeito || "-"}</div>
-          <div class="info-row" style="margin-top:10px"><strong>Peças e Serviços:</strong><br>${itensHtml}</div>
-          <div class="valor">Valor Total: R$ ${Number(data.valor_total || 0).toFixed(2)}</div>
-        </div>
-
-        ${
-          jaAprovada
-            ? `<div class="msg-ok">Esta Ordem de Serviço já foi aprovada anteriormente. A Terra Auto Elétrica agradece a confiança!</div>`
-            : `
-              <label for="obsCliente">Observação do cliente (opcional)</label>
-              <textarea id="obsCliente" rows="2" placeholder="Ex: Aprovado, pode iniciar o serviço."></textarea>
-              <button class="btn-aprovar" id="btnAprovar" onclick="aprovarServico()">Aprovar Ordem de Serviço</button>
-              <div id="retornoAcao"></div>
-            `
-        }
-      `;
-    }
-
-    async function aprovarServico() {
-      if (!osCarregada || !token) return;
-      const btn = document.getElementById("btnAprovar");
-      const retorno = document.getElementById("retornoAcao");
-      const obs = (document.getElementById("obsCliente")?.value || "").trim();
-
-      btn.disabled = true;
-      btn.textContent = "Confirmando aprovação...";
-
-      const { error: errUpdate } = await supabaseClient
-        .from("ordens_servico")
-        .update({ status: "Aprovada" })
-        .eq("id", osCarregada.id)
-        .eq("token_publico", token);
-
-      if (errUpdate) {
-        btn.disabled = false;
-        btn.textContent = "Aprovar Ordem de Serviço";
-        retorno.innerHTML = `<div class="msg-err">Não foi possível registrar a aprovação: ${errUpdate.message}</div>`;
-        return;
-      }
-
-      const v = osCarregada.clientes_veiculos || {};
-      const textoHist = obs
-        ? `OS #${osCarregada.numero_os} aprovada pelo cliente (${v.nome_cliente || "Cliente"}). Obs: ${obs}`
-        : `OS #${osCarregada.numero_os} aprovada pelo cliente (${v.nome_cliente || "Cliente"}) via link digital.`;
 
       await supabaseClient.from("historico_os").insert({
-        os_id: osCarregada.id,
-        tipo_evento: "Aprovação Cliente",
-        mensagem: textoHist
+        os_id: osCriada.id,
+        tipo_evento: "Criação OS",
+        mensagem: `OS #${osCriada.numero_os} emitida pela Terra Auto Elétrica. Valor: R$ ${valor_total.toFixed(2)}`
       });
 
-      await carregarOSPublica();
+      document.getElementById("osValor").value = "";
+      document.getElementById("osDefeito").value = "";
+      document.getElementById("osItens").value = "";
+      await carregarOS();
+      enviarWhatsAppOS(osCriada.id);
     }
 
-    carregarOSPublica();
+    async function carregarOS() {
+      const { data } = await supabaseClient
+        .from("ordens_servico")
+        .select("*, clientes_veiculos(nome_cliente, telefone_whatsapp, placa, modelo_veiculo)")
+        .order("criado_em", { ascending: false });
+
+      window.osListaCache = data || [];
+      document.getElementById("listaOS").innerHTML = (data || []).map(os => {
+        const v = os.clientes_veiculos || {};
+        const badgeClass = os.status === "Aprovada" ? "b-aprovada" : "b-aguardando";
+        return `
+          <tr>
+            <td><strong>#${os.numero_os}</strong></td>
+            <td><strong>${v.placa || ""}</strong> - ${v.modelo_veiculo || ""}<br><small>${v.nome_cliente || ""}</small></td>
+            <td>R$ ${Number(os.valor_total || 0).toFixed(2)}</td>
+            <td><span class="badge ${badgeClass}">${os.status}</span></td>
+            <td>
+              <button class="btn btn-green" style="padding:6px 10px;font-size:0.82rem" onclick="enviarWhatsAppOS('${os.id}')">Enviar WhatsApp</button>
+            </td>
+            <td>
+              <button class="btn" style="padding:6px 10px;font-size:0.82rem" onclick="abrirHistorico('${os.id}', ${os.numero_os})">Ver Histórico</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function enviarWhatsAppOS(osId) {
+      const os = (window.osListaCache || []).find(item => item.id === osId);
+      if (!os) return;
+      const v = os.clientes_veiculos || {};
+      const paginaAtualSemQuery = window.location.href.split("?")[0];
+      const baseUrl = paginaAtualSemQuery.substring(0, paginaAtualSemQuery.lastIndexOf("/") + 1);
+      const linkAprovacao = `${baseUrl}aprovacao.html?token=${os.token_publico}`;
+
+      const foneLimpo = (v.telefone_whatsapp || "").replace(/\D/g, "");
+      const fone = foneLimpo.startsWith("55") ? foneLimpo : "55" + foneLimpo;
+
+      const texto = `Olá *${v.nome_cliente}*! Segue a *Ordem de Serviço #${os.numero_os}* da *Terra Auto Elétrica* para o veículo *${v.modelo_veiculo}* (Placa: *${v.placa}*).\n\n` +
+        `*Serviço/Diagnóstico:* ${os.descricao_defeito}\n` +
+        `*Valor Total:* R$ ${Number(os.valor_total || 0).toFixed(2)}\n\n` +
+        `Para conferir os detalhes e *confirmar a execução do serviço*, acesse o link:\n${linkAprovacao}`;
+
+      await supabaseClient.from("historico_os").insert({
+        os_id: os.id,
+        tipo_evento: "Envio WhatsApp",
+        mensagem: `Link de aprovação da Terra Auto Elétrica enviado para WhatsApp (${fone}).`
+      });
+
+      window.open(`https://wa.me/${fone}?text=${encodeURIComponent(texto)}`, "_blank");
+    }
+
+    async function abrirHistorico(osId, numeroOs) {
+      osAtualModal = osId;
+      document.getElementById("modalTitulo").textContent = `Histórico e Confirmação — OS #${numeroOs}`;
+      const { data } = await supabaseClient
+        .from("historico_os")
+        .select("*")
+        .eq("os_id", osId)
+        .order("criado_em", { ascending: true });
+
+      document.getElementById("modalHistoricoLista").innerHTML = (data || []).map(h => `
+        <div class="hist-item">
+          <strong>${h.tipo_evento}</strong> — <small>${new Date(h.criado_em).toLocaleString("pt-BR")}</small><br/>
+          ${h.mensagem}
+        </div>
+      `).join("") || "<p>Nenhum registro ainda.</p>";
+
+      document.getElementById("modalHist").style.display = "flex";
+    }
+
+    async function adicionarNotaHistorico() {
+      const msg = document.getElementById("novaNotaHist").value.trim();
+      if (!msg || !osAtualModal) return;
+      await supabaseClient.from("historico_os").insert({
+        os_id: osAtualModal,
+        tipo_evento: "Registro Gerente",
+        mensagem: msg
+      });
+      document.getElementById("novaNotaHist").value = "";
+      const num = document.getElementById("modalTitulo").textContent.replace(/\D/g, "");
+      abrirHistorico(osAtualModal, num);
+    }
+
+    function fecharModal() {
+      document.getElementById("modalHist").style.display = "none";
+      osAtualModal = null;
+    }
   </script>
 </body>
 </html>
