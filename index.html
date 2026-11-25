@@ -6,13 +6,24 @@
   <title>TerraOS — Terra Auto Elétrica</title>
   <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#0f172a" />
+
+  <!-- Prévia do link ao enviar pelo WhatsApp -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Terra Auto Elétrica" />
+  <meta property="og:title" content="TerraOS — Terra Auto Elétrica" />
+  <meta property="og:description" content="Sistema de Gestão e Ordens de Serviço — Terra Auto Elétrica." />
+  <meta property="og:url" content="https://terraautoeletrica.github.io/" />
+  <meta property="og:image" content="https://terraautoeletrica.github.io/logo.png" />
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
     body { margin: 0; background: #f1f5f9; color: #0f172a; }
     .login-box { max-width: 380px; margin: 80px auto; background: #fff; padding: 28px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+    .login-logo { display: block; max-height: 76px; max-width: 100%; margin: 0 auto 14px; background: #0f172a; padding: 10px 16px; border-radius: 10px; object-fit: contain; }
     .app { display: none; min-height: 100vh; }
     .sidebar { width: 240px; background: #0f172a; color: #fff; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .sidebar img.logo { max-height: 68px; max-width: 100%; object-fit: contain; margin-bottom: 4px; border-radius: 6px; }
     .sidebar h2 { font-size: 1.05rem; margin: 0 0 12px; color: #facc15; line-height: 1.3; }
     .nav-btn { background: transparent; color: #cbd5e1; border: none; text-align: left; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; }
     .nav-btn.active, .nav-btn:hover { background: #1e293b; color: #fff; }
@@ -24,25 +35,30 @@
     input, select, textarea { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; margin-bottom: 12px; }
     button.btn { background: #0284c7; color: #fff; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
     button.btn:hover { background: #0369a1; }
+    button.btn:disabled { background: #94a3b8; cursor: not-allowed; opacity: 0.75; }
     button.btn-green { background: #16a34a; }
     button.btn-green:hover { background: #15803d; }
     button.btn-amber { background: #d97706; }
+    button.btn-amber:hover { background: #b45309; }
     table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
     th, td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; }
     .badge { padding: 4px 8px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; display: inline-block; }
     .b-agendado { background: #e0f2fe; color: #0369a1; }
     .b-aguardando { background: #fef3c7; color: #b45309; }
     .b-aprovada { background: #dcfce7; color: #15803d; }
-    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); align-items: center; justify-content: center; padding: 20px; }
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
     .modal { background: #fff; border-radius: 12px; max-width: 650px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 24px; }
     .hist-item { background: #f8fafc; border-left: 4px solid #0284c7; padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 0.88rem; }
+    .acoes-os { display: flex; gap: 6px; flex-wrap: wrap; }
+    .aviso-info { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; font-size: 0.83rem; color: #475569; margin-bottom: 14px; }
   </style>
 </head>
 <body>
 
   <!-- TELA DE LOGIN DO GERENTE -->
   <div id="loginScreen" class="login-box">
-    <h2 style="margin-top:0">Terra Auto Elétrica</h2>
+    <img src="./logo.png" alt="Logo Terra Auto Elétrica" class="login-logo" />
+    <h2 style="margin-top:0;text-align:center">Terra Auto Elétrica</h2>
     <p style="font-size:0.88rem;color:#64748b">Acesso do Gerente — Entre com o e-mail e senha cadastrados no Supabase.</p>
     <label>E-mail</label>
     <input type="email" id="loginEmail" placeholder="gerente@terraautoeletrica.com" />
@@ -55,6 +71,7 @@
   <!-- APLICAÇÃO PRINCIPAL (DESKTOP) -->
   <div id="appScreen" class="app">
     <aside class="sidebar">
+      <img src="./logo.png" alt="Logo Terra Auto Elétrica" class="logo" />
       <h2>TERRA AUTO ELÉTRICA<br><small style="color:#cbd5e1;font-weight:500">Painel TerraOS</small></h2>
       <button class="nav-btn active" onclick="trocarAba('agenda', this)">📅 Agenda de Serviços</button>
       <button class="nav-btn" onclick="trocarAba('os', this)">🔧 Ordens de Serviço</button>
@@ -126,7 +143,7 @@
           <h3>Ordens de Serviço Emitidas</h3>
           <table>
             <thead>
-              <tr><th>Nº OS</th><th>Veículo / Cliente</th><th>Valor</th><th>Status</th><th>WhatsApp / Link</th><th>Histórico</th></tr>
+              <tr><th>Nº OS</th><th>Veículo / Cliente</th><th>Valor</th><th>Status</th><th>Ações / WhatsApp</th><th>Histórico</th></tr>
             </thead>
             <tbody id="listaOS"></tbody>
           </table>
@@ -136,8 +153,8 @@
       <!-- ABA 3: CLIENTES & VEÍCULOS -->
       <section id="tab-clientes" style="display:none">
         <h1>Clientes & Veículos — Terra Auto Elétrica</h1>
-        <div class="card">
-          <h3>Cadastrar Cliente e Veículo</h3>
+        <div class="card" id="cardCadastroCliente">
+          <h3 id="tituloFormCliente">Cadastrar Cliente e Veículo</h3>
           <div class="grid-3">
             <div><label>Nome do Cliente</label><input type="text" id="clNome" placeholder="Ex: João da Silva" /></div>
             <div><label>WhatsApp (com DDD)</label><input type="text" id="clFone" placeholder="Ex: 43999998888" /></div>
@@ -154,13 +171,84 @@
           <input type="text" id="buscaPlaca" placeholder="Digite a placa ou nome para filtrar..." oninput="renderClientes()" />
           <table>
             <thead>
-              <tr><th>Placa</th><th>Veículo</th><th>Cliente</th><th>WhatsApp</th><th>KM</th></tr>
+              <tr><th>Placa</th><th>Veículo</th><th>Cliente</th><th>WhatsApp</th><th>KM</th><th>Ações</th></tr>
             </thead>
             <tbody id="listaClientes"></tbody>
           </table>
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- MODAL EDITAR CLIENTE E VEÍCULO -->
+  <div id="modalEditarCliente" class="modal-bg" onclick="if(event.target===this) fecharModalCliente()">
+    <div class="modal">
+      <h3 style="margin-top:0">Editar Cadastro de Cliente / Veículo</h3>
+      <div class="aviso-info">
+        Alterações de <strong>WhatsApp</strong> valem automaticamente para os próximos envios de OS. Se o cliente trouxe <strong>outro veículo</strong>, use o botão <strong>"+ Veículo"</strong> na lista para criar um cadastro novo sem apagar o veículo anterior.
+      </div>
+      <div class="grid-2">
+        <div>
+          <label>Nome do Cliente</label>
+          <input type="text" id="editClNome" />
+        </div>
+        <div>
+          <label>WhatsApp (com DDD)</label>
+          <input type="text" id="editClFone" />
+        </div>
+        <div>
+          <label>Placa do Veículo</label>
+          <input type="text" id="editClPlaca" style="text-transform:uppercase" />
+        </div>
+        <div>
+          <label>Modelo / Marca</label>
+          <input type="text" id="editClModelo" />
+        </div>
+        <div>
+          <label>Ano</label>
+          <input type="text" id="editClAno" />
+        </div>
+        <div>
+          <label>KM Atual</label>
+          <input type="text" id="editClKm" />
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <button class="btn btn-green" onclick="salvarEdicaoCliente()">Salvar Alterações</button>
+        <button class="btn" style="background:#64748b" onclick="fecharModalCliente()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDITAR ORDEM DE SERVIÇO -->
+  <div id="modalEditarOS" class="modal-bg" onclick="if(event.target===this) fecharModalEdicao()">
+    <div class="modal">
+      <h3 id="modalEditTitulo" style="margin-top:0">Editar Ordem de Serviço</h3>
+      <p style="font-size:0.85rem;color:#64748b;margin-top:-6px">Altere os dados antes de encaminhar o link de aprovação pelo WhatsApp.</p>
+
+      <div class="grid-2">
+        <div>
+          <label>Veículo / Cliente</label>
+          <select id="editOsVeiculo"></select>
+        </div>
+        <div>
+          <label>Valor Total (R$)</label>
+          <input type="number" step="0.01" id="editOsValor" placeholder="Ex: 350.00" />
+        </div>
+      </div>
+
+      <label>Defeito Relatado / Diagnóstico</label>
+      <textarea id="editOsDefeito" rows="2"></textarea>
+
+      <label>Peças e Mão de Obra Detalhados</label>
+      <textarea id="editOsItens" rows="3"></textarea>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <button class="btn" onclick="salvarEdicaoOS(false)">Salvar Alterações</button>
+        <button class="btn btn-green" onclick="salvarEdicaoOS(true)">Salvar e Enviar WhatsApp</button>
+        <button class="btn" style="background:#64748b" onclick="fecharModalEdicao()">Cancelar</button>
+      </div>
+    </div>
   </div>
 
   <!-- MODAL HISTÓRICO E MENSAGENS DA OS -->
@@ -182,6 +270,8 @@
 
     let clientesCache = [];
     let osAtualModal = null;
+    let osEditandoId = null;
+    let clienteEditandoId = null;
 
     async function fazerLogin() {
       const email = document.getElementById("loginEmail").value.trim();
@@ -234,6 +324,7 @@
       const { error } = await supabaseClient.from("clientes_veiculos").insert(payload);
       if (error) return alert("Erro: " + error.message);
       ["clNome", "clFone", "clPlaca", "clModelo", "clAno", "clKm"].forEach(id => document.getElementById(id).value = "");
+      document.getElementById("tituloFormCliente").textContent = "Cadastrar Cliente e Veículo";
       await carregarClientes();
       alert("Cliente e veículo cadastrados!");
     }
@@ -245,6 +336,7 @@
       const opcoes = clientesCache.map(c => `<option value="${c.id}">${c.placa} - ${c.modelo_veiculo} (${c.nome_cliente})</option>`).join("");
       document.getElementById("agVeiculo").innerHTML = opcoes;
       document.getElementById("osVeiculo").innerHTML = opcoes;
+      document.getElementById("editOsVeiculo").innerHTML = opcoes;
     }
 
     function renderClientes() {
@@ -261,8 +353,77 @@
           <td>${c.nome_cliente}</td>
           <td>${c.telefone_whatsapp}</td>
           <td>${c.km_atual || "-"}</td>
+          <td>
+            <div class="acoes-os">
+              <button class="btn btn-amber" style="padding:6px 10px;font-size:0.82rem" onclick="abrirEdicaoCliente('${c.id}')">Editar</button>
+              <button class="btn" style="padding:6px 10px;font-size:0.82rem" title="Cadastrar outro veículo para este cliente" onclick="novoVeiculoParaCliente('${c.id}')">+ Veículo</button>
+            </div>
+          </td>
         </tr>
       `).join("");
+    }
+
+    function abrirEdicaoCliente(clienteId) {
+      const c = clientesCache.find(item => item.id === clienteId);
+      if (!c) return;
+      clienteEditandoId = c.id;
+      document.getElementById("editClNome").value = c.nome_cliente || "";
+      document.getElementById("editClFone").value = c.telefone_whatsapp || "";
+      document.getElementById("editClPlaca").value = c.placa || "";
+      document.getElementById("editClModelo").value = c.modelo_veiculo || "";
+      document.getElementById("editClAno").value = c.ano || "";
+      document.getElementById("editClKm").value = c.km_atual || "";
+      document.getElementById("modalEditarCliente").style.display = "flex";
+    }
+
+    function fecharModalCliente() {
+      document.getElementById("modalEditarCliente").style.display = "none";
+      clienteEditandoId = null;
+    }
+
+    async function salvarEdicaoCliente() {
+      if (!clienteEditandoId) return;
+      const payload = {
+        nome_cliente: document.getElementById("editClNome").value.trim(),
+        telefone_whatsapp: document.getElementById("editClFone").value.replace(/\D/g, ""),
+        placa: document.getElementById("editClPlaca").value.trim().toUpperCase(),
+        modelo_veiculo: document.getElementById("editClModelo").value.trim(),
+        ano: document.getElementById("editClAno").value.trim(),
+        km_atual: document.getElementById("editClKm").value.trim()
+      };
+
+      if (!payload.nome_cliente || !payload.telefone_whatsapp || !payload.placa || !payload.modelo_veiculo) {
+        return alert("Preencha Nome, WhatsApp, Placa e Modelo.");
+      }
+
+      const { error } = await supabaseClient
+        .from("clientes_veiculos")
+        .update(payload)
+        .eq("id", clienteEditandoId);
+
+      if (error) {
+        return alert("Erro ao atualizar cadastro: " + error.message);
+      }
+
+      fecharModalCliente();
+      await carregarClientes();
+      await carregarAgenda();
+      await carregarOS();
+      alert("Cadastro de cliente e veículo atualizado!");
+    }
+
+    function novoVeiculoParaCliente(clienteId) {
+      const c = clientesCache.find(item => item.id === clienteId);
+      if (!c) return;
+      document.getElementById("clNome").value = c.nome_cliente || "";
+      document.getElementById("clFone").value = c.telefone_whatsapp || "";
+      document.getElementById("clPlaca").value = "";
+      document.getElementById("clModelo").value = "";
+      document.getElementById("clAno").value = "";
+      document.getElementById("clKm").value = "";
+      document.getElementById("tituloFormCliente").textContent = `Novo Veículo para ${c.nome_cliente}`;
+      document.getElementById("cardCadastroCliente").scrollIntoView({ behavior: "smooth" });
+      document.getElementById("clPlaca").focus();
     }
 
     async function salvarAgendamento() {
@@ -366,7 +527,8 @@
       window.osListaCache = data || [];
       document.getElementById("listaOS").innerHTML = (data || []).map(os => {
         const v = os.clientes_veiculos || {};
-        const badgeClass = os.status === "Aprovada" ? "b-aprovada" : "b-aguardando";
+        const isAprovada = os.status === "Aprovada";
+        const badgeClass = isAprovada ? "b-aprovada" : "b-aguardando";
         return `
           <tr>
             <td><strong>#${os.numero_os}</strong></td>
@@ -374,7 +536,15 @@
             <td>R$ ${Number(os.valor_total || 0).toFixed(2)}</td>
             <td><span class="badge ${badgeClass}">${os.status}</span></td>
             <td>
-              <button class="btn btn-green" style="padding:6px 10px;font-size:0.82rem" onclick="enviarWhatsAppOS('${os.id}')">Enviar WhatsApp</button>
+              <div class="acoes-os">
+                <button
+                  class="btn btn-amber"
+                  style="padding:6px 10px;font-size:0.82rem"
+                  ${isAprovada ? 'disabled title="OS já aprovada pelo cliente — edição bloqueada"' : ''}
+                  onclick="abrirEdicaoOS('${os.id}')"
+                >${isAprovada ? "Bloqueada" : "Editar"}</button>
+                <button class="btn btn-green" style="padding:6px 10px;font-size:0.82rem" onclick="enviarWhatsAppOS('${os.id}')">Enviar WhatsApp</button>
+              </div>
             </td>
             <td>
               <button class="btn" style="padding:6px 10px;font-size:0.82rem" onclick="abrirHistorico('${os.id}', ${os.numero_os})">Ver Histórico</button>
@@ -382,6 +552,98 @@
           </tr>
         `;
       }).join("");
+    }
+
+    function abrirEdicaoOS(osId) {
+      const os = (window.osListaCache || []).find(item => item.id === osId);
+      if (!os) return;
+
+      // Bloqueio de segurança na abertura do modal
+      if (os.status === "Aprovada") {
+        return alert(`A OS #${os.numero_os} já foi aprovada pelo cliente e está bloqueada para edição.`);
+      }
+
+      osEditandoId = os.id;
+      document.getElementById("modalEditTitulo").textContent = `Editar Ordem de Serviço #${os.numero_os}`;
+      document.getElementById("editOsVeiculo").value = os.veiculo_id;
+      document.getElementById("editOsValor").value = Number(os.valor_total || 0);
+      document.getElementById("editOsDefeito").value = os.descricao_defeito || "";
+
+      // Extrai o texto dos itens_json para preencher o textarea
+      let itensTexto = "";
+      if (Array.isArray(os.itens_json) && os.itens_json.length > 0) {
+        itensTexto = os.itens_json
+          .map(it => (typeof it === "string" ? it : (it.descricao || "")))
+          .filter(Boolean)
+          .join(" | ");
+      }
+      document.getElementById("editOsItens").value = itensTexto;
+      document.getElementById("modalEditarOS").style.display = "flex";
+    }
+
+    function fecharModalEdicao() {
+      document.getElementById("modalEditarOS").style.display = "none";
+      osEditandoId = null;
+    }
+
+    async function salvarEdicaoOS(enviarDepois) {
+      if (!osEditandoId) return;
+
+      const veiculo_id = document.getElementById("editOsVeiculo").value;
+      const valor_total = parseFloat(document.getElementById("editOsValor").value || "0");
+      const descricao_defeito = document.getElementById("editOsDefeito").value.trim();
+      const itensTexto = document.getElementById("editOsItens").value.trim();
+
+      if (!veiculo_id || !descricao_defeito) {
+        return alert("Selecione o veículo e informe o defeito/serviço.");
+      }
+
+      // Checagem dupla de segurança no Supabase antes de gravar
+      const { data: osBanco, error: errCheck } = await supabaseClient
+        .from("ordens_servico")
+        .select("id, numero_os, status")
+        .eq("id", osEditandoId)
+        .single();
+
+      if (errCheck || !osBanco) {
+        return alert("Erro ao validar status da OS antes de salvar.");
+      }
+
+      if (osBanco.status === "Aprovada") {
+        fecharModalEdicao();
+        await carregarOS();
+        return alert(`Ação bloqueada: o cliente acabou de aprovar a OS #${osBanco.numero_os}!`);
+      }
+
+      const { error: errUpdate } = await supabaseClient
+        .from("ordens_servico")
+        .update({
+          veiculo_id,
+          descricao_defeito,
+          itens_json: [{ descricao: itensTexto || descricao_defeito, valor: valor_total }],
+          valor_total
+        })
+        .eq("id", osEditandoId);
+
+      if (errUpdate) {
+        return alert("Erro ao salvar edição da OS: " + errUpdate.message);
+      }
+
+      await supabaseClient.from("historico_os").insert({
+        os_id: osEditandoId,
+        tipo_evento: "Edição OS",
+        mensagem: `OS #${osBanco.numero_os} editada pela Terra Auto Elétrica. Novo valor: R$ ${valor_total.toFixed(2)}`
+      });
+
+      const idParaEnvio = osEditandoId;
+      fecharModalEdicao();
+      await carregarOS();
+
+      if (enviarDepois) {
+        enviarWhatsAppOS(idParaEnvio);
+      } else {
+        alert(`OS #${osBanco.numero_os} atualizada com sucesso!`);
+      }
     }
 
     async function enviarWhatsAppOS(osId) {
