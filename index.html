@@ -22,35 +22,55 @@
     .login-box { max-width: 380px; margin: 80px auto; background: #fff; padding: 28px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); }
     .login-logo { display: block; max-height: 76px; max-width: 100%; margin: 0 auto 14px; background: #0f172a; padding: 10px 16px; border-radius: 10px; object-fit: contain; }
     .app { display: none; min-height: 100vh; }
-    .sidebar { width: 240px; background: #0f172a; color: #fff; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .sidebar { width: 240px; background: #0f172a; color: #fff; padding: 20px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
     .sidebar img.logo { max-height: 68px; max-width: 100%; object-fit: contain; margin-bottom: 4px; border-radius: 6px; }
     .sidebar h2 { font-size: 1.05rem; margin: 0 0 12px; color: #facc15; line-height: 1.3; }
     .nav-btn { background: transparent; color: #cbd5e1; border: none; text-align: left; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; }
     .nav-btn.active, .nav-btn:hover { background: #1e293b; color: #fff; }
-    .main { flex: 1; padding: 24px 32px; max-width: 1300px; }
-    .card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+    .main { flex: 1; padding: 24px 32px; max-width: 1360px; min-width: 0; }
+    .resumo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+    .resumo-card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.05); border-left: 4px solid #0f172a; }
+    .resumo-card small { display: block; color: #64748b; font-size: 0.8rem; font-weight: 600; }
+    .resumo-card strong { font-size: 1.25rem; color: #0f172a; display: block; margin-top: 4px; }
+    .card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.05); overflow-x: auto; }
     .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #334155; }
-    input, select, textarea { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; margin-bottom: 12px; }
-    button.btn { background: #0284c7; color: #fff; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    input, select, textarea { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; margin-bottom: 12px; background: #fff; }
+    button.btn { background: #0284c7; color: #fff; border: none; padding: 9px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; }
     button.btn:hover { background: #0369a1; }
     button.btn:disabled { background: #94a3b8; cursor: not-allowed; opacity: 0.75; }
     button.btn-green { background: #16a34a; }
     button.btn-green:hover { background: #15803d; }
     button.btn-amber { background: #d97706; }
     button.btn-amber:hover { background: #b45309; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    th, td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; }
-    .badge { padding: 4px 8px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; display: inline-block; }
+    button.btn-slate { background: #475569; }
+    button.btn-slate:hover { background: #334155; }
+    button.btn-red { background: #dc2626; }
+    button.btn-red:hover { background: #b91c1c; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+    .badge { padding: 4px 8px; border-radius: 999px; font-size: 0.76rem; font-weight: 700; display: inline-block; white-space: nowrap; }
     .b-agendado { background: #e0f2fe; color: #0369a1; }
     .b-aguardando { background: #fef3c7; color: #b45309; }
     .b-aprovada { background: #dcfce7; color: #15803d; }
+    .b-execucao { background: #ede9fe; color: #6d28d9; }
+    .b-pronta { background: #cffafe; color: #0e7490; }
+    .b-entregue { background: #e2e8f0; color: #334155; }
+    .b-cancelado { background: #fee2e2; color: #991b1b; }
     .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
-    .modal { background: #fff; border-radius: 12px; max-width: 650px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 24px; }
+    .modal { background: #fff; border-radius: 12px; max-width: 720px; width: 100%; max-height: 88vh; overflow-y: auto; padding: 24px; }
     .hist-item { background: #f8fafc; border-left: 4px solid #0284c7; padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 0.88rem; }
     .acoes-os { display: flex; gap: 6px; flex-wrap: wrap; }
     .aviso-info { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; font-size: 0.83rem; color: #475569; margin-bottom: 14px; }
+    .filtros-bar { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 8px; }
+    .status-select-mini { padding: 5px 8px; font-size: 0.8rem; margin-bottom: 0; min-width: 132px; }
+    @media (max-width: 900px) {
+      .app { flex-direction: column; }
+      .sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; }
+      .resumo-grid, .grid-2, .grid-3, .filtros-bar { grid-template-columns: 1fr; }
+      .main { padding: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -68,7 +88,7 @@
     <p id="loginMsg" style="color:#dc2626;font-size:0.85rem;margin-top:10px"></p>
   </div>
 
-  <!-- APLICAÇÃO PRINCIPAL (DESKTOP) -->
+  <!-- APLICAÇÃO PRINCIPAL -->
   <div id="appScreen" class="app">
     <aside class="sidebar">
       <img src="./logo.png" alt="Logo Terra Auto Elétrica" class="logo" />
@@ -82,6 +102,26 @@
     </aside>
 
     <main class="main">
+      <!-- RESUMO RÁPIDO -->
+      <div class="resumo-grid">
+        <div class="resumo-card" style="border-left-color:#d97706">
+          <small>OS Aguardando Aprovação</small>
+          <strong id="resumoAguardando">0</strong>
+        </div>
+        <div class="resumo-card" style="border-left-color:#16a34a">
+          <small>OS Aprovadas / Em Andamento</small>
+          <strong id="resumoAprovadas">0</strong>
+        </div>
+        <div class="resumo-card" style="border-left-color:#0284c7">
+          <small>Valor Total OS (Abertas/Aprov.)</small>
+          <strong id="resumoValor">R$ 0,00</strong>
+        </div>
+        <div class="resumo-card" style="border-left-color:#0f172a">
+          <small>Agendamentos Ativos</small>
+          <strong id="resumoAgenda">0</strong>
+        </div>
+      </div>
+
       <!-- ABA 1: AGENDA -->
       <section id="tab-agenda">
         <h1>Agenda de Serviços — Terra Auto Elétrica</h1>
@@ -108,9 +148,24 @@
 
         <div class="card">
           <h3>Serviços Agendados</h3>
+          <div class="filtros-bar">
+            <div>
+              <label>Buscar na Agenda</label>
+              <input type="text" id="buscaAgenda" placeholder="Filtrar por placa, veículo, cliente ou serviço..." oninput="renderAgenda()" />
+            </div>
+            <div>
+              <label>Status</label>
+              <select id="filtroStatusAgenda" onchange="renderAgenda()">
+                <option value="TODOS">Todos</option>
+                <option value="Agendado">Agendado</option>
+                <option value="Convertido em OS">Convertido em OS</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+          </div>
           <table>
             <thead>
-              <tr><th>Data/Hora</th><th>Placa / Veículo</th><th>Cliente</th><th>Serviço</th><th>Status</th><th>Ação</th></tr>
+              <tr><th>Data/Hora</th><th>Placa / Veículo</th><th>Cliente</th><th>Serviço</th><th>Status</th><th>Ações</th></tr>
             </thead>
             <tbody id="listaAgenda"></tbody>
           </table>
@@ -144,9 +199,26 @@
 
         <div class="card">
           <h3>Ordens de Serviço Emitidas</h3>
+          <div class="filtros-bar">
+            <div>
+              <label>Buscar por Nº OS, Placa, Veículo ou Cliente</label>
+              <input type="text" id="buscaOS" placeholder="Ex: 104, ABC1D23, Strada ou João..." oninput="renderOS()" />
+            </div>
+            <div>
+              <label>Filtrar por Status</label>
+              <select id="filtroStatusOS" onchange="renderOS()">
+                <option value="TODOS">Todos os status</option>
+                <option value="Aguardando Aprovação">Aguardando Aprovação</option>
+                <option value="Aprovada">Aprovada</option>
+                <option value="Em Execução">Em Execução</option>
+                <option value="Concluída / Pronta">Concluída / Pronta</option>
+                <option value="Entregue">Entregue</option>
+              </select>
+            </div>
+          </div>
           <table>
             <thead>
-              <tr><th>Nº OS</th><th>Veículo / Cliente</th><th>Valor</th><th>Status</th><th>Ações / WhatsApp</th><th>Histórico</th></tr>
+              <tr><th>Nº OS</th><th>Veículo / Cliente</th><th>Valor</th><th>Status / Etapa</th><th>Ações / WhatsApp</th><th>Histórico / PDF</th></tr>
             </thead>
             <tbody id="listaOS"></tbody>
           </table>
@@ -166,6 +238,8 @@
             <div><label>Ano</label><input type="text" id="clAno" placeholder="Ex: 2018" /></div>
             <div><label>KM Atual</label><input type="text" id="clKm" placeholder="Ex: 112.400" /></div>
           </div>
+          <label>Observação Técnica / Tipo de Veículo (opcional)</label>
+          <input type="text" id="clObsTec" placeholder="Ex: Alternador adaptado / Sistema 24V / Trator / Caminhão" />
           <button class="btn" onclick="salvarClienteVeiculo()">Cadastrar Cliente e Veículo</button>
         </div>
 
@@ -191,34 +265,29 @@
         Alterações de <strong>WhatsApp</strong> valem automaticamente para os próximos envios de OS. Se o cliente trouxe <strong>outro veículo</strong>, use o botão <strong>"+ Veículo"</strong> na lista para criar um cadastro novo sem apagar o veículo anterior.
       </div>
       <div class="grid-2">
-        <div>
-          <label>Nome do Cliente</label>
-          <input type="text" id="editClNome" />
-        </div>
-        <div>
-          <label>WhatsApp (com DDD)</label>
-          <input type="text" id="editClFone" />
-        </div>
-        <div>
-          <label>Placa do Veículo</label>
-          <input type="text" id="editClPlaca" style="text-transform:uppercase" />
-        </div>
-        <div>
-          <label>Modelo / Marca</label>
-          <input type="text" id="editClModelo" />
-        </div>
-        <div>
-          <label>Ano</label>
-          <input type="text" id="editClAno" />
-        </div>
-        <div>
-          <label>KM Atual</label>
-          <input type="text" id="editClKm" />
-        </div>
+        <div><label>Nome do Cliente</label><input type="text" id="editClNome" /></div>
+        <div><label>WhatsApp (com DDD)</label><input type="text" id="editClFone" /></div>
+        <div><label>Placa do Veículo</label><input type="text" id="editClPlaca" style="text-transform:uppercase" /></div>
+        <div><label>Modelo / Marca</label><input type="text" id="editClModelo" /></div>
+        <div><label>Ano</label><input type="text" id="editClAno" /></div>
+        <div><label>KM Atual</label><input type="text" id="editClKm" /></div>
       </div>
+      <label>Observação Técnica / Tipo de Veículo</label>
+      <input type="text" id="editClObsTec" />
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
         <button class="btn btn-green" onclick="salvarEdicaoCliente()">Salvar Alterações</button>
-        <button class="btn" style="background:#64748b" onclick="fecharModalCliente()">Cancelar</button>
+        <button class="btn btn-slate" onclick="fecharModalCliente()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL HISTÓRICO DO VEÍCULO -->
+  <div id="modalHistVeiculo" class="modal-bg" onclick="if(event.target===this) fecharModalVeiculo()">
+    <div class="modal">
+      <h3 id="modalVeicTitulo" style="margin-top:0">Histórico do Veículo</h3>
+      <div id="modalVeicConteudo"></div>
+      <div style="margin-top:14px">
+        <button class="btn btn-slate" onclick="fecharModalVeiculo()">Fechar</button>
       </div>
     </div>
   </div>
@@ -249,7 +318,7 @@
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
         <button class="btn" onclick="salvarEdicaoOS(false)">Salvar Alterações</button>
         <button class="btn btn-green" onclick="salvarEdicaoOS(true)">Salvar e Enviar WhatsApp</button>
-        <button class="btn" style="background:#64748b" onclick="fecharModalEdicao()">Cancelar</button>
+        <button class="btn btn-slate" onclick="fecharModalEdicao()">Cancelar</button>
       </div>
     </div>
   </div>
@@ -263,18 +332,38 @@
       <label>Registrar Nota ou Resposta do Cliente no Histórico</label>
       <input type="text" id="novaNotaHist" placeholder="Ex: Cliente confirmou por telefone / pedirá peça original" />
       <button class="btn" onclick="adicionarNotaHistorico()">Salvar no Histórico</button>
-      <button class="btn" style="background:#64748b;margin-left:8px" onclick="fecharModal()">Fechar</button>
+      <button class="btn btn-slate" style="margin-left:8px" onclick="fecharModal()">Fechar</button>
     </div>
   </div>
 
   <script src="./config.js"></script>
   <script>
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    }
 
     let clientesCache = [];
+    let agendaCache = [];
     let osAtualModal = null;
     let osEditandoId = null;
     let clienteEditandoId = null;
+
+    const STATUS_BLOQUEADOS = ["Aprovada", "Em Execução", "Concluída / Pronta", "Entregue"];
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&")
+        .replace(/</g, "<")
+        .replace(/>/g, ">")
+        .replace(/"/g, """);
+    }
+
+    function escapeJsAttr(str) {
+      return String(str || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/"/g, """);
+    }
 
     async function fazerLogin() {
       const email = document.getElementById("loginEmail").value.trim();
@@ -298,45 +387,85 @@
       await carregarClientes();
       await carregarAgenda();
       await carregarOS();
+      atualizarResumo();
     }
 
     supabaseClient.auth.getSession().then(({ data }) => {
-      if (data.session) iniciarApp();
+      if (data && data.session) iniciarApp();
     });
 
     function trocarAba(aba, btn) {
       ["agenda", "os", "clientes"].forEach(t => {
-        document.getElementById("tab-" + t).style.display = t === aba ? "block" : "none";
+        const el = document.getElementById("tab-" + t);
+        if (el) el.style.display = t === aba ? "block" : "none";
       });
       document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
       if (btn) btn.classList.add("active");
     }
 
+    function atualizarResumo() {
+      const listaOS = Array.isArray(window.osListaCache) ? window.osListaCache : [];
+      const aguardando = listaOS.filter(o => !o.status || String(o.status).includes("Aguardando")).length;
+      const aprovadas = listaOS.filter(o => STATUS_BLOQUEADOS.includes(o.status)).length;
+      const valorTotal = listaOS
+        .filter(o => o.status !== "Cancelada")
+        .reduce((acc, o) => acc + (Number(o.valor_total) || 0), 0);
+      const agAtivos = (Array.isArray(agendaCache) ? agendaCache : []).filter(a => a.status === "Agendado").length;
+
+      document.getElementById("resumoAguardando").textContent = aguardando;
+      document.getElementById("resumoAprovadas").textContent = aprovadas;
+      document.getElementById("resumoValor").textContent = `R$ ${valorTotal.toFixed(2)}`;
+      document.getElementById("resumoAgenda").textContent = agAtivos;
+    }
+
+    function extrairObsTecnica(modeloStr) {
+      const match = String(modeloStr || "").match(/\[OBS:\s*(.*?)\]$/);
+      return match ? match[1] : "";
+    }
+
+    function limparModeloExibicao(modeloStr) {
+      return String(modeloStr || "").replace(/\s*\[OBS:\s*.*?\]$/, "").trim();
+    }
+
+    function montarModeloComObs(modeloLimpo, obsTec) {
+      const limpo = limparModeloExibicao(modeloLimpo);
+      const obs = String(obsTec || "").trim();
+      return obs ? `${limpo} [OBS: ${obs}]` : limpo;
+    }
+
     async function salvarClienteVeiculo() {
+      const modeloBase = document.getElementById("clModelo").value.trim();
+      const obsTec = document.getElementById("clObsTec").value.trim();
       const payload = {
         nome_cliente: document.getElementById("clNome").value.trim(),
         telefone_whatsapp: document.getElementById("clFone").value.replace(/\D/g, ""),
         placa: document.getElementById("clPlaca").value.trim().toUpperCase(),
-        modelo_veiculo: document.getElementById("clModelo").value.trim(),
+        modelo_veiculo: montarModeloComObs(modeloBase, obsTec),
         ano: document.getElementById("clAno").value.trim(),
         km_atual: document.getElementById("clKm").value.trim()
       };
-      if (!payload.nome_cliente || !payload.telefone_whatsapp || !payload.placa || !payload.modelo_veiculo) {
+      if (!payload.nome_cliente || !payload.telefone_whatsapp || !payload.placa || !modeloBase) {
         return alert("Preencha Nome, WhatsApp, Placa e Modelo.");
       }
       const { error } = await supabaseClient.from("clientes_veiculos").insert(payload);
       if (error) return alert("Erro: " + error.message);
-      ["clNome", "clFone", "clPlaca", "clModelo", "clAno", "clKm"].forEach(id => document.getElementById(id).value = "");
+      ["clNome", "clFone", "clPlaca", "clModelo", "clAno", "clKm", "clObsTec"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
       document.getElementById("tituloFormCliente").textContent = "Cadastrar Cliente e Veículo";
       await carregarClientes();
       alert("Cliente e veículo cadastrados!");
     }
 
     async function carregarClientes() {
-      const { data } = await supabaseClient.from("clientes_veiculos").select("*").order("criado_em", { ascending: false });
-      clientesCache = data || [];
+      const { data, error } = await supabaseClient.from("clientes_veiculos").select("*").order("criado_em", { ascending: false });
+      if (error) console.error("Erro ao carregar clientes:", error.message);
+      clientesCache = Array.isArray(data) ? data : [];
       renderClientes();
-      const opcoes = clientesCache.map(c => `<option value="${c.id}">${c.placa} - ${c.modelo_veiculo} (${c.nome_cliente})</option>`).join("");
+      const opcoes = clientesCache.map(c => {
+        const modLimpo = limparModeloExibicao(c.modelo_veiculo);
+        return `<option value="${escapeHtml(c.id)}">${escapeHtml(c.placa)} - ${escapeHtml(modLimpo)} (${escapeHtml(c.nome_cliente)})</option>`;
+      }).join("");
       document.getElementById("agVeiculo").innerHTML = opcoes;
       document.getElementById("osVeiculo").innerHTML = opcoes;
       document.getElementById("editOsVeiculo").innerHTML = opcoes;
@@ -345,25 +474,33 @@
     function renderClientes() {
       const filtro = (document.getElementById("buscaPlaca")?.value || "").toLowerCase();
       const filtrados = clientesCache.filter(c =>
-        c.placa.toLowerCase().includes(filtro) ||
-        c.nome_cliente.toLowerCase().includes(filtro) ||
-        c.modelo_veiculo.toLowerCase().includes(filtro)
+        String(c.placa || "").toLowerCase().includes(filtro) ||
+        String(c.nome_cliente || "").toLowerCase().includes(filtro) ||
+        String(c.modelo_veiculo || "").toLowerCase().includes(filtro)
       );
-      document.getElementById("listaClientes").innerHTML = filtrados.map(c => `
-        <tr>
-          <td><strong>${c.placa}</strong></td>
-          <td>${c.modelo_veiculo} ${c.ano ? "(" + c.ano + ")" : ""}</td>
-          <td>${c.nome_cliente}</td>
-          <td>${c.telefone_whatsapp}</td>
-          <td>${c.km_atual || "-"}</td>
-          <td>
-            <div class="acoes-os">
-              <button class="btn btn-amber" style="padding:6px 10px;font-size:0.82rem" onclick="abrirEdicaoCliente('${c.id}')">Editar</button>
-              <button class="btn" style="padding:6px 10px;font-size:0.82rem" title="Cadastrar outro veículo para este cliente" onclick="novoVeiculoParaCliente('${c.id}')">+ Veículo</button>
-            </div>
-          </td>
-        </tr>
-      `).join("");
+      document.getElementById("listaClientes").innerHTML = filtrados.map(c => {
+        const obsTec = extrairObsTecnica(c.modelo_veiculo);
+        const modLimpo = limparModeloExibicao(c.modelo_veiculo);
+        return `
+          <tr>
+            <td><strong>${escapeHtml(c.placa)}</strong></td>
+            <td>
+              ${escapeHtml(modLimpo)} ${c.ano ? "(" + escapeHtml(c.ano) + ")" : ""}
+              ${obsTec ? `<br><small style="color:#475569">Obs: ${escapeHtml(obsTec)}</small>` : ""}
+            </td>
+            <td>${escapeHtml(c.nome_cliente)}</td>
+            <td>${escapeHtml(c.telefone_whatsapp)}</td>
+            <td>${escapeHtml(c.km_atual || "-")}</td>
+            <td>
+              <div class="acoes-os">
+                <button class="btn btn-amber" style="padding:6px 10px;font-size:0.8rem" onclick="abrirEdicaoCliente('${escapeJsAttr(c.id)}')">Editar</button>
+                <button class="btn" style="padding:6px 10px;font-size:0.8rem" title="Cadastrar outro veículo para este cliente" onclick="novoVeiculoParaCliente('${escapeJsAttr(c.id)}')">+ Veículo</button>
+                <button class="btn btn-slate" style="padding:6px 10px;font-size:0.8rem" onclick="abrirHistoricoVeiculo('${escapeJsAttr(c.id)}')">Histórico</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
     }
 
     function abrirEdicaoCliente(clienteId) {
@@ -373,9 +510,10 @@
       document.getElementById("editClNome").value = c.nome_cliente || "";
       document.getElementById("editClFone").value = c.telefone_whatsapp || "";
       document.getElementById("editClPlaca").value = c.placa || "";
-      document.getElementById("editClModelo").value = c.modelo_veiculo || "";
+      document.getElementById("editClModelo").value = limparModeloExibicao(c.modelo_veiculo);
       document.getElementById("editClAno").value = c.ano || "";
       document.getElementById("editClKm").value = c.km_atual || "";
+      document.getElementById("editClObsTec").value = extrairObsTecnica(c.modelo_veiculo);
       document.getElementById("modalEditarCliente").style.display = "flex";
     }
 
@@ -386,16 +524,18 @@
 
     async function salvarEdicaoCliente() {
       if (!clienteEditandoId) return;
+      const modeloBase = document.getElementById("editClModelo").value.trim();
+      const obsTec = document.getElementById("editClObsTec").value.trim();
       const payload = {
         nome_cliente: document.getElementById("editClNome").value.trim(),
         telefone_whatsapp: document.getElementById("editClFone").value.replace(/\D/g, ""),
         placa: document.getElementById("editClPlaca").value.trim().toUpperCase(),
-        modelo_veiculo: document.getElementById("editClModelo").value.trim(),
+        modelo_veiculo: montarModeloComObs(modeloBase, obsTec),
         ano: document.getElementById("editClAno").value.trim(),
         km_atual: document.getElementById("editClKm").value.trim()
       };
 
-      if (!payload.nome_cliente || !payload.telefone_whatsapp || !payload.placa || !payload.modelo_veiculo) {
+      if (!payload.nome_cliente || !payload.telefone_whatsapp || !payload.placa || !modeloBase) {
         return alert("Preencha Nome, WhatsApp, Placa e Modelo.");
       }
 
@@ -418,15 +558,68 @@
     function novoVeiculoParaCliente(clienteId) {
       const c = clientesCache.find(item => item.id === clienteId);
       if (!c) return;
+      trocarAba("clientes", document.querySelectorAll(".nav-btn")[2]);
       document.getElementById("clNome").value = c.nome_cliente || "";
       document.getElementById("clFone").value = c.telefone_whatsapp || "";
       document.getElementById("clPlaca").value = "";
       document.getElementById("clModelo").value = "";
       document.getElementById("clAno").value = "";
       document.getElementById("clKm").value = "";
+      document.getElementById("clObsTec").value = "";
       document.getElementById("tituloFormCliente").textContent = `Novo Veículo para ${c.nome_cliente}`;
       document.getElementById("cardCadastroCliente").scrollIntoView({ behavior: "smooth" });
       document.getElementById("clPlaca").focus();
+    }
+
+    async function abrirHistoricoVeiculo(clienteId) {
+      const c = clientesCache.find(item => item.id === clienteId);
+      if (!c) return;
+      const modLimpo = limparModeloExibicao(c.modelo_veiculo);
+      document.getElementById("modalVeicTitulo").textContent = `Histórico — ${c.placa} (${modLimpo})`;
+
+      const { data: oss } = await supabaseClient
+        .from("ordens_servico")
+        .select("*")
+        .eq("veiculo_id", clienteId)
+        .order("criado_em", { ascending: false });
+
+      const { data: ags } = await supabaseClient
+        .from("agendamentos")
+        .select("*")
+        .eq("veiculo_id", clienteId)
+        .order("data_hora", { ascending: false });
+
+      const osHtml = (oss && oss.length)
+        ? oss.map(o => `
+            <div class="hist-item">
+              <strong>OS #${escapeHtml(o.numero_os)}</strong> — <span class="badge ${classeBadgeOS(o.status)}">${escapeHtml(o.status || "Aguardando Aprovação")}</span> — <strong>R$ ${(Number(o.valor_total) || 0).toFixed(2)}</strong><br/>
+              <small>${o.criado_em ? new Date(o.criado_em).toLocaleString("pt-BR") : ""}</small><br/>
+              ${escapeHtml(o.descricao_defeito || "")}
+            </div>
+          `).join("")
+        : "<p>Nenhuma OS registrada para este veículo.</p>";
+
+      const agHtml = (ags && ags.length)
+        ? ags.map(a => `
+            <div class="hist-item" style="border-left-color:#d97706">
+              <strong>Agendamento</strong> — ${a.data_hora ? new Date(a.data_hora).toLocaleString("pt-BR") : ""} (${escapeHtml(a.status || "")})<br/>
+              ${escapeHtml(a.tipo_servico || "")}
+            </div>
+          `).join("")
+        : "<p>Nenhum agendamento registrado para este veículo.</p>";
+
+      document.getElementById("modalVeicConteudo").innerHTML = `
+        <p style="font-size:0.88rem;color:#475569"><strong>Cliente:</strong> ${escapeHtml(c.nome_cliente)} | <strong>WhatsApp:</strong> ${escapeHtml(c.telefone_whatsapp)}</p>
+        <h4>Ordens de Serviço</h4>
+        ${osHtml}
+        <h4 style="margin-top:16px">Agendamentos</h4>
+        ${agHtml}
+      `;
+      document.getElementById("modalHistVeiculo").style.display = "flex";
+    }
+
+    function fecharModalVeiculo() {
+      document.getElementById("modalHistVeiculo").style.display = "none";
     }
 
     async function salvarAgendamento() {
@@ -437,7 +630,10 @@
       if (!veiculo_id || !data_hora || !tipo_servico) return alert("Preencha veículo, data/hora e serviço.");
 
       const { error } = await supabaseClient.from("agendamentos").insert({
-        veiculo_id, data_hora: new Date(data_hora).toISOString(), tipo_servico, observacao_gerente
+        veiculo_id,
+        data_hora: new Date(data_hora).toISOString(),
+        tipo_servico,
+        observacao_gerente
       });
       if (error) return alert("Erro: " + error.message);
       document.getElementById("agServico").value = "";
@@ -446,29 +642,82 @@
     }
 
     async function carregarAgenda() {
-      const { data } = await supabaseClient
+      const { data, error } = await supabaseClient
         .from("agendamentos")
-        .select("*, clientes_veiculos(nome_cliente, placa, modelo_veiculo)")
+        .select("*, clientes_veiculos(nome_cliente, telefone_whatsapp, placa, modelo_veiculo)")
         .order("data_hora", { ascending: true });
 
-      document.getElementById("listaAgenda").innerHTML = (data || []).map(a => {
-        const dt = new Date(a.data_hora).toLocaleString("pt-BR");
+      if (error) console.error("Erro ao carregar agenda:", error.message);
+      agendaCache = Array.isArray(data) ? data : [];
+      renderAgenda();
+      atualizarResumo();
+    }
+
+    function renderAgenda() {
+      const busca = (document.getElementById("buscaAgenda")?.value || "").toLowerCase();
+      const statusFiltro = document.getElementById("filtroStatusAgenda")?.value || "TODOS";
+
+      const filtrados = agendaCache.filter(a => {
         const v = a.clientes_veiculos || {};
+        const modLimpo = limparModeloExibicao(v.modelo_veiculo).toLowerCase();
+        const bateTexto = !busca ||
+          String(v.placa || "").toLowerCase().includes(busca) ||
+          modLimpo.includes(busca) ||
+          String(v.nome_cliente || "").toLowerCase().includes(busca) ||
+          String(a.tipo_servico || "").toLowerCase().includes(busca);
+        const bateStatus = statusFiltro === "TODOS" || a.status === statusFiltro;
+        return bateTexto && bateStatus;
+      });
+
+      document.getElementById("listaAgenda").innerHTML = filtrados.map(a => {
+        const dt = a.data_hora ? new Date(a.data_hora).toLocaleString("pt-BR") : "-";
+        const v = a.clientes_veiculos || {};
+        const modLimpo = limparModeloExibicao(v.modelo_veiculo);
+        const badgeClass = a.status === "Cancelado" ? "b-cancelado" : "b-agendado";
         return `
           <tr>
-            <td>${dt}</td>
-            <td><strong>${v.placa || ""}</strong> - ${v.modelo_veiculo || ""}</td>
-            <td>${v.nome_cliente || ""}</td>
-            <td>${a.tipo_servico}</td>
-            <td><span class="badge b-agendado">${a.status}</span></td>
+            <td>${escapeHtml(dt)}</td>
+            <td><strong>${escapeHtml(v.placa || "")}</strong> - ${escapeHtml(modLimpo)}</td>
+            <td>${escapeHtml(v.nome_cliente || "")}</td>
+            <td>${escapeHtml(a.tipo_servico)}${a.observacao_gerente ? `<br><small style="color:#64748b">${escapeHtml(a.observacao_gerente)}</small>` : ""}</td>
+            <td><span class="badge ${badgeClass}">${escapeHtml(a.status || "")}</span></td>
             <td>
-              ${a.status === "Agendado"
-                ? `<button class="btn btn-amber" style="padding:6px 10px;font-size:0.82rem" onclick="converterEmOS('${a.id}', '${a.veiculo_id}', '${a.tipo_servico.replace(/'/g, "")}')">Virar OS</button>`
-                : "-"}
+              <div class="acoes-os">
+                ${a.status === "Agendado"
+                  ? `<button class="btn btn-amber" style="padding:6px 9px;font-size:0.78rem" onclick="converterEmOS('${escapeJsAttr(a.id)}', '${escapeJsAttr(a.veiculo_id)}', '${escapeJsAttr(a.tipo_servico)}')">Virar OS</button>
+                     <button class="btn btn-green" style="padding:6px 9px;font-size:0.78rem" onclick="lembrarAgendamentoWhatsApp('${escapeJsAttr(a.id)}')">Lembrar</button>
+                     <button class="btn btn-red" style="padding:6px 9px;font-size:0.78rem" onclick="cancelarAgendamento('${escapeJsAttr(a.id)}')">Cancelar</button>`
+                  : "-"}
+              </div>
             </td>
           </tr>
         `;
       }).join("");
+    }
+
+    function lembrarAgendamentoWhatsApp(agId) {
+      const a = agendaCache.find(item => item.id === agId);
+      if (!a) return;
+      const v = a.clientes_veiculos || {};
+      const modLimpo = limparModeloExibicao(v.modelo_veiculo);
+      const dt = a.data_hora ? new Date(a.data_hora).toLocaleString("pt-BR") : "";
+      const foneLimpo = String(v.telefone_whatsapp || "").replace(/\D/g, "");
+      const fone = foneLimpo.startsWith("55") ? foneLimpo : "55" + foneLimpo;
+
+      const msg = `Olá *${v.nome_cliente || "cliente"}*! Passando para lembrar do seu agendamento na *Terra Auto Elétrica*:\n\n` +
+        `*Veículo:* ${modLimpo} (Placa: *${v.placa || "-"}*)\n` +
+        `*Data/Hora:* ${dt}\n` +
+        `*Serviço:* ${a.tipo_servico}\n\n` +
+        `Qualquer dúvida ou alteração de horário, fale por aqui!`;
+
+      window.open(`https://wa.me/${fone}?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+
+    async function cancelarAgendamento(agId) {
+      if (!confirm("Deseja cancelar este agendamento?")) return;
+      const { error } = await supabaseClient.from("agendamentos").update({ status: "Cancelado" }).eq("id", agId);
+      if (error) return alert("Erro ao cancelar: " + error.message);
+      await carregarAgenda();
     }
 
     async function converterEmOS(agId, veiculoId, servico) {
@@ -526,58 +775,252 @@
       }
     }
 
+    function classeBadgeOS(status) {
+      if (status === "Aprovada") return "b-aprovada";
+      if (status === "Em Execução") return "b-execucao";
+      if (status === "Concluída / Pronta") return "b-pronta";
+      if (status === "Entregue") return "b-entregue";
+      return "b-aguardando";
+    }
+
     async function carregarOS() {
-      const { data } = await supabaseClient
+      const { data, error } = await supabaseClient
         .from("ordens_servico")
         .select("*, clientes_veiculos(nome_cliente, telefone_whatsapp, placa, modelo_veiculo)")
         .order("criado_em", { ascending: false });
 
-      window.osListaCache = data || [];
-      document.getElementById("listaOS").innerHTML = (data || []).map(os => {
+      if (error) console.error("Erro ao carregar OS:", error.message);
+      window.osListaCache = Array.isArray(data) ? data : [];
+      renderOS();
+      atualizarResumo();
+    }
+
+    function renderOS() {
+      const busca = (document.getElementById("buscaOS")?.value || "").toLowerCase();
+      const statusFiltro = document.getElementById("filtroStatusOS")?.value || "TODOS";
+
+      const filtradas = (window.osListaCache || []).filter(os => {
         const v = os.clientes_veiculos || {};
-        const isAprovada = os.status === "Aprovada";
-        const badgeClass = isAprovada ? "b-aprovada" : "b-aguardando";
+        const modLimpo = limparModeloExibicao(v.modelo_veiculo).toLowerCase();
+        const bateTexto = !busca ||
+          String(os.numero_os || "").toLowerCase().includes(busca) ||
+          String(v.placa || "").toLowerCase().includes(busca) ||
+          modLimpo.includes(busca) ||
+          String(v.nome_cliente || "").toLowerCase().includes(busca) ||
+          String(os.descricao_defeito || "").toLowerCase().includes(busca);
+
+        const stAtual = os.status || "Aguardando Aprovação";
+        const bateStatus = statusFiltro === "TODOS" ||
+          (statusFiltro === "Aguardando Aprovação" && stAtual.includes("Aguardando")) ||
+          stAtual === statusFiltro;
+
+        return bateTexto && bateStatus;
+      });
+
+      document.getElementById("listaOS").innerHTML = filtradas.map(os => {
+        const v = os.clientes_veiculos || {};
+        const modLimpo = limparModeloExibicao(v.modelo_veiculo);
+        const stAtual = os.status || "Aguardando Aprovação";
+        const bloqueada = STATUS_BLOQUEADOS.includes(stAtual);
+        const badgeClass = classeBadgeOS(stAtual);
+
         return `
           <tr>
-            <td><strong>#${os.numero_os}</strong></td>
-            <td><strong>${v.placa || ""}</strong> - ${v.modelo_veiculo || ""}<br><small>${v.nome_cliente || ""}</small></td>
-            <td>R$ ${Number(os.valor_total || 0).toFixed(2)}</td>
-            <td><span class="badge ${badgeClass}">${os.status}</span></td>
+            <td><strong>#${escapeHtml(os.numero_os)}</strong></td>
+            <td><strong>${escapeHtml(v.placa || "")}</strong> - ${escapeHtml(modLimpo)}<br><small>${escapeHtml(v.nome_cliente || "")}</small></td>
+            <td>R$ ${(Number(os.valor_total) || 0).toFixed(2)}</td>
+            <td>
+              <span class="badge ${badgeClass}">${escapeHtml(stAtual)}</span><br/>
+              <select class="status-select-mini" style="margin-top:6px" onchange="alterarStatusOS('${escapeJsAttr(os.id)}', this.value)">
+                <option value="Aguardando Aprovação" ${stAtual.includes("Aguardando") ? "selected" : ""}>Aguardando</option>
+                <option value="Aprovada" ${stAtual === "Aprovada" ? "selected" : ""}>Aprovada</option>
+                <option value="Em Execução" ${stAtual === "Em Execução" ? "selected" : ""}>Em Execução</option>
+                <option value="Concluída / Pronta" ${stAtual === "Concluída / Pronta" ? "selected" : ""}>Concluída / Pronta</option>
+                <option value="Entregue" ${stAtual === "Entregue" ? "selected" : ""}>Entregue</option>
+              </select>
+            </td>
             <td>
               <div class="acoes-os">
                 <button
                   class="btn btn-amber"
-                  style="padding:6px 10px;font-size:0.82rem"
-                  ${isAprovada ? 'disabled title="OS já aprovada pelo cliente — edição bloqueada"' : ''}
-                  onclick="abrirEdicaoOS('${os.id}')"
-                >${isAprovada ? "Bloqueada" : "Editar"}</button>
-                <button class="btn btn-green" style="padding:6px 10px;font-size:0.82rem" onclick="enviarWhatsAppOS('${os.id}')">Enviar WhatsApp</button>
+                  style="padding:6px 9px;font-size:0.78rem"
+                  ${bloqueada ? 'disabled title="OS bloqueada para edição neste status"' : ''}
+                  onclick="abrirEdicaoOS('${escapeJsAttr(os.id)}')"
+                >${bloqueada ? "Bloqueada" : "Editar"}</button>
+                <button class="btn btn-green" style="padding:6px 9px;font-size:0.78rem" onclick="enviarWhatsAppOS('${escapeJsAttr(os.id)}')">WhatsApp</button>
+                <button class="btn" style="padding:6px 9px;font-size:0.78rem" title="Avisar cliente que o veículo está pronto" onclick="avisarProntoWhatsApp('${escapeJsAttr(os.id)}')">Pronto</button>
+                <button class="btn btn-slate" style="padding:6px 9px;font-size:0.78rem" title="Duplicar OS" onclick="duplicarOS('${escapeJsAttr(os.id)}')">Duplicar</button>
               </div>
             </td>
             <td>
-              <button class="btn" style="padding:6px 10px;font-size:0.82rem" onclick="abrirHistorico('${os.id}', ${os.numero_os})">Ver Histórico</button>
+              <div class="acoes-os">
+                <button class="btn" style="padding:6px 9px;font-size:0.78rem" onclick="abrirHistorico('${escapeJsAttr(os.id)}', '${escapeJsAttr(os.numero_os)}')">Histórico</button>
+                <button class="btn btn-slate" style="padding:6px 9px;font-size:0.78rem" onclick="imprimirOS('${escapeJsAttr(os.id)}')">Imprimir / PDF</button>
+              </div>
             </td>
           </tr>
         `;
       }).join("");
     }
 
+    async function alterarStatusOS(osId, novoStatus) {
+      const { error } = await supabaseClient
+        .from("ordens_servico")
+        .update({ status: novoStatus })
+        .eq("id", osId);
+
+      if (error) {
+        alert("Erro ao atualizar status: " + error.message);
+        await carregarOS();
+        return;
+      }
+
+      const os = (window.osListaCache || []).find(item => item.id === osId);
+      await supabaseClient.from("historico_os").insert({
+        os_id: osId,
+        tipo_evento: "Atualização Status",
+        mensagem: `OS #${os?.numero_os || osId} alterada para "${novoStatus}".`
+      });
+
+      await carregarOS();
+    }
+
+    function duplicarOS(osId) {
+      const os = (window.osListaCache || []).find(item => item.id === osId);
+      if (!os) return;
+      let itensTexto = "";
+      if (Array.isArray(os.itens_json) && os.itens_json.length > 0) {
+        itensTexto = os.itens_json
+          .map(it => (typeof it === "string" ? it : (it.descricao || "")))
+          .filter(Boolean)
+          .join(" | ");
+      }
+      document.getElementById("osVeiculo").value = os.veiculo_id;
+      document.getElementById("osValor").value = Number(os.valor_total) || 0;
+      document.getElementById("osDefeito").value = os.descricao_defeito || "";
+      document.getElementById("osItens").value = itensTexto;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      alert(`Dados da OS #${os.numero_os} carregados no formulário. Revise e clique em Salvar OS para gerar uma nova OS.`);
+    }
+
+    function avisarProntoWhatsApp(osId) {
+      const os = (window.osListaCache || []).find(item => item.id === osId);
+      if (!os) return;
+      const v = os.clientes_veiculos || {};
+      const modLimpo = limparModeloExibicao(v.modelo_veiculo);
+      const foneLimpo = String(v.telefone_whatsapp || "").replace(/\D/g, "");
+      const fone = foneLimpo.startsWith("55") ? foneLimpo : "55" + foneLimpo;
+
+      const texto = `Olá *${v.nome_cliente || "cliente"}*! A *Ordem de Serviço #${os.numero_os}* da *Terra Auto Elétrica* para o veículo *${modLimpo}* (Placa: *${v.placa || "-"}*) está *concluída / pronta para retirada*.\n\n` +
+        `*Valor Total:* R$ ${(Number(os.valor_total) || 0).toFixed(2)}\n\n` +
+        `Qualquer dúvida, estamos à disposição!`;
+
+      window.open(`https://wa.me/${fone}?text=${encodeURIComponent(texto)}`, "_blank");
+    }
+
+    async function imprimirOS(osId) {
+      const os = (window.osListaCache || []).find(item => item.id === osId);
+      if (!os) return;
+      const v = os.clientes_veiculos || {};
+      const modLimpo = limparModeloExibicao(v.modelo_veiculo);
+
+      const { data: hist } = await supabaseClient
+        .from("historico_os")
+        .select("*")
+        .eq("os_id", osId)
+        .order("criado_em", { ascending: true });
+
+      const pagtoRegistro = (Array.isArray(hist) ? hist : [])
+        .slice()
+        .reverse()
+        .find(h => String(h.mensagem || "").includes("Forma de pagamento:"));
+
+      const formaPagtoTexto = pagtoRegistro
+        ? escapeHtml(String(pagtoRegistro.mensagem).split("Forma de pagamento:")[1].split(".")[0].trim())
+        : "A definir com o cliente";
+
+      let itensHtml = "";
+      if (Array.isArray(os.itens_json) && os.itens_json.length > 0) {
+        itensHtml = os.itens_json.map(it => {
+          if (typeof it === "string") return `<li>${escapeHtml(it)}</li>`;
+          const valStr = it.valor !== undefined && it.valor !== null && it.valor !== ""
+            ? ` — R$ ${(Number(it.valor) || 0).toFixed(2)}`
+            : "";
+          return `<li>${escapeHtml(it.descricao || "")}${valStr}</li>`;
+        }).join("");
+      } else {
+        itensHtml = `<li>${escapeHtml(os.descricao_defeito || "Serviço elétrico automotivo")}</li>`;
+      }
+
+      const janela = window.open("", "_blank", "width=800,height=900");
+      if (!janela) return alert("Permita pop-ups no navegador para abrir a visualização de impressão/PDF.");
+
+      janela.document.write(`
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8" />
+          <title>OS #${escapeHtml(os.numero_os)} — Terra Auto Elétrica</title>
+          <style>
+            body { font-family: Arial, sans-serif; color: #0f172a; padding: 28px; max-width: 740px; margin: 0 auto; }
+            .topo { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 14px; margin-bottom: 20px; }
+            .topo h1 { margin: 0; font-size: 1.35rem; }
+            .box { border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; }
+            .box h3 { margin: 0 0 8px; font-size: 0.95rem; text-transform: uppercase; color: #334155; }
+            .total { font-size: 1.25rem; font-weight: bold; text-align: right; margin-top: 12px; }
+            @media print { .no-print { display: none; } }
+          </style>
+        </head>
+        <body>
+          <div class="no-print" style="margin-bottom:16px">
+            <button onclick="window.print()" style="padding:8px 14px;font-weight:bold;cursor:pointer">Imprimir / Salvar PDF</button>
+          </div>
+          <div class="topo">
+            <div>
+              <h1>TERRA AUTO ELÉTRICA</h1>
+              <div>Ordem de Serviço Digital</div>
+            </div>
+            <div style="text-align:right">
+              <strong>OS #${escapeHtml(os.numero_os)}</strong><br/>
+              Status: <strong>${escapeHtml(os.status || "Aguardando Aprovação")}</strong>
+            </div>
+          </div>
+          <div class="box">
+            <h3>Cliente e Veículo</h3>
+            <div><strong>Cliente:</strong> ${escapeHtml(v.nome_cliente || "-")} | <strong>WhatsApp:</strong> ${escapeHtml(v.telefone_whatsapp || "-")}</div>
+            <div><strong>Veículo:</strong> ${escapeHtml(modLimpo || "-")} | <strong>Placa:</strong> ${escapeHtml(v.placa || "-")}</div>
+          </div>
+          <div class="box">
+            <h3>Diagnóstico / Defeito Relatado</h3>
+            <div>${escapeHtml(os.descricao_defeito || "-")}</div>
+          </div>
+          <div class="box">
+            <h3>Peças e Mão de Obra</h3>
+            <ul>${itensHtml}</ul>
+            <div><strong>Forma de pagamento informada:</strong> ${formaPagtoTexto}</div>
+            <div class="total">Valor Total: R$ ${(Number(os.valor_total) || 0).toFixed(2)}</div>
+          </div>
+        </body>
+        </html>
+      `);
+      janela.document.close();
+    }
+
     function abrirEdicaoOS(osId) {
       const os = (window.osListaCache || []).find(item => item.id === osId);
       if (!os) return;
 
-      // Bloqueio de segurança na abertura do modal
-      if (os.status === "Aprovada") {
-        return alert(`A OS #${os.numero_os} já foi aprovada pelo cliente e está bloqueada para edição.`);
+      const stAtual = os.status || "Aguardando Aprovação";
+      if (STATUS_BLOQUEADOS.includes(stAtual)) {
+        return alert(`A OS #${os.numero_os} está com status "${stAtual}" e bloqueada para edição.`);
       }
 
       osEditandoId = os.id;
       document.getElementById("modalEditTitulo").textContent = `Editar Ordem de Serviço #${os.numero_os}`;
       document.getElementById("editOsVeiculo").value = os.veiculo_id;
-      document.getElementById("editOsValor").value = Number(os.valor_total || 0);
+      document.getElementById("editOsValor").value = Number(os.valor_total) || 0;
       document.getElementById("editOsDefeito").value = os.descricao_defeito || "";
 
-      // Extrai o texto dos itens_json para preencher o textarea
       let itensTexto = "";
       if (Array.isArray(os.itens_json) && os.itens_json.length > 0) {
         itensTexto = os.itens_json
@@ -606,7 +1049,6 @@
         return alert("Selecione o veículo e informe o defeito/serviço.");
       }
 
-      // Checagem dupla de segurança no Supabase antes de gravar
       const { data: osBanco, error: errCheck } = await supabaseClient
         .from("ordens_servico")
         .select("id, numero_os, status")
@@ -617,10 +1059,10 @@
         return alert("Erro ao validar status da OS antes de salvar.");
       }
 
-      if (osBanco.status === "Aprovada") {
+      if (STATUS_BLOQUEADOS.includes(osBanco.status)) {
         fecharModalEdicao();
         await carregarOS();
-        return alert(`Ação bloqueada: o cliente acabou de aprovar a OS #${osBanco.numero_os}!`);
+        return alert(`Ação bloqueada: a OS #${osBanco.numero_os} está com status "${osBanco.status}"!`);
       }
 
       const { error: errUpdate } = await supabaseClient
@@ -658,17 +1100,18 @@
       const os = (window.osListaCache || []).find(item => item.id === osId);
       if (!os) return;
       const v = os.clientes_veiculos || {};
+      const modLimpo = limparModeloExibicao(v.modelo_veiculo);
       const paginaAtualSemQuery = window.location.href.split("?")[0];
       const baseUrl = paginaAtualSemQuery.substring(0, paginaAtualSemQuery.lastIndexOf("/") + 1);
       const linkAprovacao = `${baseUrl}aprovacao.html?token=${os.token_publico}`;
 
-      const foneLimpo = (v.telefone_whatsapp || "").replace(/\D/g, "");
+      const foneLimpo = String(v.telefone_whatsapp || "").replace(/\D/g, "");
       const fone = foneLimpo.startsWith("55") ? foneLimpo : "55" + foneLimpo;
 
-      const texto = `Olá *${v.nome_cliente}*! Segue a *Ordem de Serviço #${os.numero_os}* da *Terra Auto Elétrica* para o veículo *${v.modelo_veiculo}* (Placa: *${v.placa}*).\n\n` +
+      const texto = `Olá *${v.nome_cliente || "cliente"}*! Segue a *Ordem de Serviço #${os.numero_os}* da *Terra Auto Elétrica* para o veículo *${modLimpo}* (Placa: *${v.placa || "-"}*).\n\n` +
         `*Serviço/Diagnóstico:* ${os.descricao_defeito}\n` +
-        `*Valor Total:* R$ ${Number(os.valor_total || 0).toFixed(2)}\n\n` +
-        `Para conferir os detalhes e *confirmar a execução do serviço*, acesse o link:\n${linkAprovacao}`;
+        `*Valor Total:* R$ ${(Number(os.valor_total) || 0).toFixed(2)}\n\n` +
+        `Para conferir os detalhes, *escolher a forma de pagamento* e *confirmar a execução do serviço*, acesse o link:\n${linkAprovacao}`;
 
       await supabaseClient.from("historico_os").insert({
         os_id: os.id,
@@ -688,12 +1131,14 @@
         .eq("os_id", osId)
         .order("criado_em", { ascending: true });
 
-      document.getElementById("modalHistoricoLista").innerHTML = (data || []).map(h => `
-        <div class="hist-item">
-          <strong>${h.tipo_evento}</strong> — <small>${new Date(h.criado_em).toLocaleString("pt-BR")}</small><br/>
-          ${h.mensagem}
-        </div>
-      `).join("") || "<p>Nenhum registro ainda.</p>";
+      document.getElementById("modalHistoricoLista").innerHTML = (Array.isArray(data) && data.length)
+        ? data.map(h => `
+            <div class="hist-item">
+              <strong>${escapeHtml(h.tipo_evento)}</strong> — <small>${h.criado_em ? new Date(h.criado_em).toLocaleString("pt-BR") : ""}</small><br/>
+              ${escapeHtml(h.mensagem)}
+            </div>
+          `).join("")
+        : "<p>Nenhum registro ainda.</p>";
 
       document.getElementById("modalHist").style.display = "flex";
     }
