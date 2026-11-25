@@ -271,10 +271,30 @@
   <script>
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
 
+    const CHAVE_AGENDA_OCULTA = "terraos_agenda_ocultos";
     let clientesCache = [];
     let osAtualModal = null;
     let osEditandoId = null;
     let clienteEditandoId = null;
+
+    function getAgendamentosOcultos() {
+      try {
+        const raw = localStorage.getItem(CHAVE_AGENDA_OCULTA);
+        const arr = JSON.parse(raw || "[]");
+        return Array.isArray(arr) ? arr : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function ocultarAgendamentoConvertido(agId) {
+      const item = (window.agendaListaCache || []).find(ag => String(ag.id) === String(agId));
+      if (!item || item.status !== "Convertido em OS") return;
+      const ocultos = new Set(getAgendamentosOcultos().map(String));
+      ocultos.add(String(agId));
+      localStorage.setItem(CHAVE_AGENDA_OCULTA, JSON.stringify([...ocultos]));
+      carregarAgenda();
+    }
 
     async function fazerLogin() {
       const email = document.getElementById("loginEmail").value.trim();
@@ -451,7 +471,17 @@
         .select("*, clientes_veiculos(nome_cliente, placa, modelo_veiculo)")
         .order("data_hora", { ascending: true });
 
-      document.getElementById("listaAgenda").innerHTML = (data || []).map(a => {
+      window.agendaListaCache = data || [];
+      const ocultosSet = new Set(getAgendamentosOcultos().map(String));
+
+      const itensVisiveis = (data || []).filter(a => {
+        if (a.status === "Convertido em OS" && ocultosSet.has(String(a.id))) {
+          return false;
+        }
+        return true;
+      });
+
+      document.getElementById("listaAgenda").innerHTML = itensVisiveis.map(a => {
         const dt = new Date(a.data_hora).toLocaleString("pt-BR");
         const v = a.clientes_veiculos || {};
         return `
@@ -464,7 +494,9 @@
             <td>
               ${a.status === "Agendado"
                 ? `<button class="btn btn-amber" style="padding:6px 10px;font-size:0.82rem" onclick="converterEmOS('${a.id}', '${a.veiculo_id}', '${a.tipo_servico.replace(/'/g, "")}')">Virar OS</button>`
-                : "-"}
+                : a.status === "Convertido em OS"
+                  ? `<button class="btn" style="padding:6px 10px;font-size:0.82rem;background:#64748b" onclick="ocultarAgendamentoConvertido('${a.id}')">Ocultar</button>`
+                  : "-"}
             </td>
           </tr>
         `;
