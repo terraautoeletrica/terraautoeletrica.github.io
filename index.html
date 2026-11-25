@@ -555,7 +555,10 @@
               </div>
             </td>
             <td>
-              <button class="btn" style="padding:6px 10px;font-size:0.82rem" onclick="abrirHistorico('${os.id}', ${os.numero_os})">Ver Histórico</button>
+              <div class="acoes-os">
+                <button class="btn" style="padding:6px 10px;font-size:0.82rem" onclick="abrirHistorico('${os.id}', ${os.numero_os})">Ver Histórico</button>
+                <button class="btn" style="padding:6px 10px;font-size:0.82rem;background:#475569" onclick="imprimirOS('${os.id}')">PDF</button>
+              </div>
             </td>
           </tr>
         `;
@@ -566,7 +569,6 @@
       const os = (window.osListaCache || []).find(item => item.id === osId);
       if (!os) return;
 
-      // Bloqueio de segurança na abertura do modal
       if (os.status === "Aprovada") {
         return alert(`A OS #${os.numero_os} já foi aprovada pelo cliente e está bloqueada para edição.`);
       }
@@ -577,7 +579,6 @@
       document.getElementById("editOsValor").value = Number(os.valor_total || 0);
       document.getElementById("editOsDefeito").value = os.descricao_defeito || "";
 
-      // Extrai o texto dos itens_json para preencher o textarea
       let itensTexto = "";
       if (Array.isArray(os.itens_json) && os.itens_json.length > 0) {
         itensTexto = os.itens_json
@@ -606,7 +607,6 @@
         return alert("Selecione o veículo e informe o defeito/serviço.");
       }
 
-      // Checagem dupla de segurança no Supabase antes de gravar
       const { data: osBanco, error: errCheck } = await supabaseClient
         .from("ordens_servico")
         .select("id, numero_os, status")
@@ -714,6 +714,95 @@
     function fecharModal() {
       document.getElementById("modalHist").style.display = "none";
       osAtualModal = null;
+    }
+
+    async function imprimirOS(osId) {
+      const os = (window.osListaCache || []).find(item => item.id === osId);
+      if (!os) return;
+      const v = os.clientes_veiculos || {};
+      const modeloLimpo = String(v.modelo_veiculo || "").replace(/\s*\[OBS:\s*.*?\]$/, "").trim();
+
+      const { data: hist } = await supabaseClient
+        .from("historico_os")
+        .select("*")
+        .eq("os_id", osId)
+        .order("criado_em", { ascending: true });
+
+      const regPagto = (Array.isArray(hist) ? hist : [])
+        .slice()
+        .reverse()
+        .find(h => String(h.mensagem || "").includes("Forma de pagamento:"));
+
+      const formaPagto = regPagto
+        ? String(regPagto.mensagem).split("Forma de pagamento:")[1].split(".")[0].trim()
+        : "A definir";
+
+      let itensHtml = "";
+      if (Array.isArray(os.itens_json) && os.itens_json.length > 0) {
+        itensHtml = os.itens_json.map(it => {
+          if (typeof it === "string") return `<li>${it}</li>`;
+          const val = (it.valor !== undefined && it.valor !== null && it.valor !== "")
+            ? ` — R$ ${Number(it.valor || 0).toFixed(2)}`
+            : "";
+          return `<li>${it.descricao || ""}${val}</li>`;
+        }).join("");
+      } else {
+        itensHtml = `<li>${os.descricao_defeito || "Serviço elétrico automotivo"}</li>`;
+      }
+
+      const janela = window.open("", "_blank", "width=800,height=900");
+      if (!janela) {
+        return alert("Permita pop-ups no navegador para gerar o PDF da OS.");
+      }
+
+      janela.document.write(`
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8" />
+          <title>OS #${os.numero_os} — Terra Auto Elétrica</title>
+          <style>
+            body { font-family: Arial, sans-serif; color: #0f172a; padding: 28px; max-width: 740px; margin: 0 auto; }
+            .topo { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 18px; }
+            .box { border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; margin-bottom: 14px; }
+            .box h3 { margin: 0 0 8px; font-size: 0.9rem; text-transform: uppercase; color: #334155; }
+            .total { font-size: 1.2rem; font-weight: bold; text-align: right; margin-top: 10px; }
+            @media print { .no-print { display: none; } }
+          </style>
+        </head>
+        <body>
+          <div class="no-print" style="margin-bottom:14px">
+            <button onclick="window.print()" style="padding:8px 14px;font-weight:bold;cursor:pointer">Salvar como PDF / Imprimir</button>
+          </div>
+          <div class="topo">
+            <div>
+              <h2 style="margin:0">TERRA AUTO ELÉTRICA</h2>
+              <div>Ordem de Serviço</div>
+            </div>
+            <div style="text-align:right">
+              <strong>OS #${os.numero_os}</strong><br/>
+              Status: <strong>${os.status || "Aguardando Aprovação"}</strong>
+            </div>
+          </div>
+          <div class="box">
+            <h3>Cliente e Veículo</h3>
+            <div><strong>Cliente:</strong> ${v.nome_cliente || "-"} | <strong>WhatsApp:</strong> ${v.telefone_whatsapp || "-"}</div>
+            <div><strong>Veículo:</strong> ${modeloLimpo || "-"} | <strong>Placa:</strong> ${v.placa || "-"}</div>
+          </div>
+          <div class="box">
+            <h3>Diagnóstico / Defeito</h3>
+            <div>${os.descricao_defeito || "-"}</div>
+          </div>
+          <div class="box">
+            <h3>Peças e Mão de Obra</h3>
+            <ul>${itensHtml}</ul>
+            <div><strong>Forma de pagamento:</strong> ${formaPagto}</div>
+            <div class="total">Valor Total: R$ ${Number(os.valor_total || 0).toFixed(2)}</div>
+          </div>
+        </body>
+        </html>
+      `);
+      janela.document.close();
     }
   </script>
 </body>

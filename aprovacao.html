@@ -80,6 +80,15 @@
     let osCarregada = null;
     let formaPagamentoSelecionada = "";
 
+    function escapeHtml(texto) {
+      return String(texto ?? "")
+        .replace(/&/g, "&")
+        .replace(/</g, "<")
+        .replace(/>/g, ">")
+        .replace(/"/g, """)
+        .replace(/'/g, "'");
+    }
+
     function limparModelo(mod) {
       return String(mod || "").replace(/\s*\[OBS:\s*.*?\]$/, "").trim();
     }
@@ -87,15 +96,15 @@
     function formatarItens(itensJson, fallbackTexto) {
       if (Array.isArray(itensJson) && itensJson.length > 0) {
         return itensJson.map(item => {
-          if (typeof item === "string") return item;
-          const desc = item.descricao || "";
+          if (typeof item === "string") return escapeHtml(item);
+          const desc = escapeHtml(item.descricao || "");
           const val = item.valor !== undefined && item.valor !== null && item.valor !== ""
             ? ` — R$ ${Number(item.valor).toFixed(2)}`
             : "";
           return `${desc}${val}`;
         }).join("<br>");
       }
-      return fallbackTexto || "Serviço elétrico automotivo";
+      return escapeHtml(fallbackTexto || "Serviço elétrico automotivo");
     }
 
     function selecionarFormaPagamento(opcao, btnEl) {
@@ -133,13 +142,13 @@
 
       container.innerHTML = `
         <div class="info-box">
-          <div class="info-row"><strong>OS:</strong> #${data.numero_os}  |  <span class="badge ${badgeClass}">${data.status}</span></div>
-          <div class="info-row"><strong>Cliente:</strong> ${v.nome_cliente || "-"}</div>
-          <div class="info-row"><strong>Veículo:</strong> ${modLimpo || "-"} ${v.ano ? `(${v.ano})` : ""} — <strong>Placa:</strong> ${v.placa || "-"}</div>
+          <div class="info-row"><strong>OS:</strong> #${escapeHtml(data.numero_os)}  |  <span class="badge ${badgeClass}">${escapeHtml(data.status)}</span></div>
+          <div class="info-row"><strong>Cliente:</strong> ${escapeHtml(v.nome_cliente || "-")}</div>
+          <div class="info-row"><strong>Veículo:</strong> ${escapeHtml(modLimpo || "-")} ${v.ano ? `(${escapeHtml(v.ano)})` : ""} — <strong>Placa:</strong> ${escapeHtml(v.placa || "-")}</div>
         </div>
 
         <div class="info-box">
-          <div class="info-row"><strong>Diagnóstico / Defeito:</strong><br>${data.descricao_defeito || "-"}</div>
+          <div class="info-row"><strong>Diagnóstico / Defeito:</strong><br>${escapeHtml(data.descricao_defeito || "-")}</div>
           <div class="info-row" style="margin-top:10px"><strong>Peças e Serviços:</strong><br>${itensHtml}</div>
           <div class="valor">Valor Total: R$ ${Number(data.valor_total || 0).toFixed(2)}</div>
         </div>
@@ -189,7 +198,7 @@
       if (errUpdate) {
         btn.disabled = false;
         btn.textContent = "Aprovar Ordem de Serviço";
-        retorno.innerHTML = `<div class="msg-err">Não foi possível registrar a aprovação: ${errUpdate.message}</div>`;
+        retorno.innerHTML = `<div class="msg-err">Não foi possível registrar a aprovação: ${escapeHtml(errUpdate.message)}</div>`;
         return;
       }
 
