@@ -136,7 +136,10 @@
           <textarea id="osDefeito" rows="2" placeholder="Ex: Carro sem carga no alternador, luz da bateria acesa no painel."></textarea>
           <label>Peças e Mão de Obra Detalhados</label>
           <textarea id="osItens" rows="2" placeholder="Ex: Reparo placa de diodos + rolamentos (R$ 190,00) | Mão de obra revisão alternador (R$ 160,00)"></textarea>
-          <button class="btn btn-green" onclick="criarOS()">Salvar OS e Gerar Link WhatsApp</button>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn" onclick="criarOS(false)">Salvar OS (Revisar Antes)</button>
+            <button class="btn btn-green" onclick="criarOS(true)">Salvar e Enviar WhatsApp</button>
+          </div>
         </div>
 
         <div class="card">
@@ -475,7 +478,7 @@
       document.getElementById("osVeiculo").dataset.agendamentoId = agId;
     }
 
-    async function criarOS() {
+    async function criarOS(enviarAgora = false) {
       const selectVeic = document.getElementById("osVeiculo");
       const veiculo_id = selectVeic.value;
       const agendamento_id = selectVeic.dataset.agendamentoId || null;
@@ -515,7 +518,12 @@
       document.getElementById("osDefeito").value = "";
       document.getElementById("osItens").value = "";
       await carregarOS();
-      enviarWhatsAppOS(osCriada.id);
+
+      if (enviarAgora) {
+        enviarWhatsAppOS(osCriada.id);
+      } else {
+        alert(`OS #${osCriada.numero_os} salva! Revise na lista abaixo ou edite antes de enviar pelo WhatsApp.`);
+      }
     }
 
     async function carregarOS() {
