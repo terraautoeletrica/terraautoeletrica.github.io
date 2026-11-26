@@ -3,198 +3,222 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aprovação de Ordem de Serviço — Terra Auto Elétrica</title>
+  <title>Aprovação de OS — Terra Auto Elétrica</title>
+
+  <!-- Prévia do link ao enviar pelo WhatsApp -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Terra Auto Elétrica" />
+  <meta property="og:title" content="Aprovação de Ordem de Serviço — Terra Auto Elétrica" />
+  <meta property="og:description" content="Confira os detalhes do orçamento, escolha a forma de pagamento e aprove sua Ordem de Serviço online." />
+  <meta property="og:url" content="https://terraautoeletrica.github.io/aprovacao.html" />
+  <meta property="og:image" content="https://terraautoeletrica.github.io/logo.png" />
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
   <style>
-    :root {
-      --bg: #0f172a;
-      --card: #ffffff;
-      --ink: #0f172a;
-      --muted: #64748b;
-      --line: #e2e8f0;
-      --primary: #0f172a;
-      --accent: #eab308;
-      --ok: #15803d;
-      --ok-bg: #dcfce7;
-      --warn: #92400e;
-      --warn-bg: #fef3c7;
-      --err: #b91c1c;
-      --err-bg: #fee2e2;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f1f5f9;
-      color: var(--ink);
-      padding: 16px;
-    }
-
-    .container {
-      max-width: 680px;
-      margin: 0 auto;
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
-      border: 1px solid var(--line);
-    }
-
-    .header {
-      background: var(--bg);
-      color: #ffffff;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      border-bottom: 4px solid var(--accent);
-    }
-
-    .header-title h1 {
-      margin: 0;
-      font-size: 1.15rem;
-      letter-spacing: 0.02em;
-    }
-
-    .header-title p {
-      margin: 4px 0 0;
-      font-size: 0.9rem;
-      color: #cbd5e1;
-    }
-
-    .body {
-      padding: 22px;
-    }
-
-    .status-box {
-      padding: 14px 16px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      line-height: 1.45;
-      margin-bottom: 16px;
-    }
-
-    .status-loading {
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { margin: 0; background: #f1f5f9; color: #0f172a; padding: 20px; }
+    .container { max-width: 560px; margin: 24px auto; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,.08); }
+    .header { background: #0f172a; color: #fff; padding: 22px 24px; display: flex; align-items: center; gap: 16px; }
+    .header img.logo { width: 64px; height: 64px; object-fit: contain; border-radius: 8px; flex-shrink: 0; }
+    .header-texto h1 { margin: 0; font-size: 1.25rem; color: #facc15; }
+    .header-texto p { margin: 4px 0 0; font-size: 0.9rem; color: #cbd5e1; }
+    .content { padding: 24px; }
+    .info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; font-size: 0.92rem; line-height: 1.5; }
+    .info-row { margin-bottom: 6px; }
+    .info-row:last-child { margin-bottom: 0; }
+    .valor { font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-top: 8px; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+    .b-aguardando { background: #fef3c7; color: #b45309; }
+    .b-aprovada { background: #dcfce7; color: #15803d; }
+    label { display: block; font-size: 0.88rem; font-weight: 700; margin-bottom: 8px; color: #334155; }
+    .pagto-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+    .btn-pagto {
       background: #f8fafc;
-      border: 1px solid var(--line);
-      color: var(--ink);
-    }
-
-    .status-error {
-      background: var(--err-bg);
-      border: 1px solid #fca5a5;
-      color: var(--err);
-    }
-
-    .status-approved {
-      background: var(--ok-bg);
-      border: 1px solid #86efac;
-      color: var(--ok);
-      font-weight: 600;
-    }
-
-    .status-pending {
-      background: var(--warn-bg);
-      border: 1px solid #fcd34d;
-      color: var(--warn);
-      font-weight: 600;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .info-box {
-      background: #f8fafc;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 12px 14px;
-    }
-
-    .info-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .info-value {
-      font-size: 0.98rem;
-      font-weight: 600;
-      color: var(--ink);
-      word-break: break-word;
-    }
-
-    .section {
-      margin-bottom: 18px;
-    }
-
-    .section-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .desc-box {
-      background: #f8fafc;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 14px;
-      white-space: pre-wrap;
-      line-height: 1.5;
-      font-size: 0.95rem;
-    }
-
-    .total-box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #0f172a;
-      color: #ffffff;
-      padding: 14px 18px;
-      border-radius: 10px;
-      margin-bottom: 18px;
-    }
-
-    .total-label {
-      font-size: 0.95rem;
-      color: #e2e8f0;
-    }
-
-    .total-value {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #facc15;
-    }
-
-    label {
-      display: block;
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    select,
-    textarea {
-      width: 100%;
+      color: #0f172a;
+      border: 2px solid #cbd5e1;
       padding: 11px 12px;
       border-radius: 10px;
-      border: 1px solid #cbd5e1;
-      font-family: inherit;
-      font-size: 0.95rem;
-      background: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+    .btn-pagto:hover { border-color: #0284c7; background: #f0f9ff; }
+    .btn-pagto.ativo {
+      background: #0f172a;
+      color: #facc15;
+      border-color: #0f172a;
+    }
+    .btn-pagto.full-span { grid-column: 1 / -1; }
+    textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; margin-bottom: 14px; }
+    button.btn-aprovar { width: 100%; background: #16a34a; color: #fff; border: none; padding: 13px 18px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+    button.btn-aprovar:hover { background: #15803d; }
+    button.btn-aprovar:disabled { background: #94a3b8; cursor: not-allowed; }
+    .msg-ok { background: #dcfce7; color: #166534; padding: 12px 14px; border-radius: 8px; margin-top: 14px; font-size: 0.9rem; font-weight: 600; }
+    .msg-err { background: #fee2e2; color: #991b1b; padding: 12px 14px; border-radius: 8px; margin-top: 14px; font-size: 0.9rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="./logo.png" alt="Logo Terra Auto Elétrica" class="logo" />
+      <div class="header-texto">
+        <h1>TERRA AUTO ELÉTRICA</h1>
+        <p>Confirmação e Aprovação de Ordem de Serviço</p>
+      </div>
+    </div>
+    <div class="content" id="areaOS">
+      <p>Carregando dados da Ordem de Serviço...</p>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    let osCarregada = null;
+    let formaPagamentoSelecionada = "";
+
+    function escapeHtml(texto) {
+      return String(texto ?? "")
+        .replace(/&/g, "&")
+        .replace(/</g, "<")
+        .replace(/>/g, ">")
+        .replace(/"/g, """)
+        .replace(/'/g, "'");
+    }
+
+    function limparModelo(mod) {
+      return String(mod || "").replace(/\s*\[OBS:\s*.*?\]$/, "").trim();
+    }
+
+    function formatarItens(itensJson, fallbackTexto) {
+      if (Array.isArray(itensJson) && itensJson.length > 0) {
+        return itensJson.map(item => {
+          if (typeof item === "string") return escapeHtml(item);
+          const desc = escapeHtml(item.descricao || "");
+          const val = item.valor !== undefined && item.valor !== null && item.valor !== ""
+            ? ` — R$ ${Number(item.valor).toFixed(2)}`
+            : "";
+          return `${desc}${val}`;
+        }).join("<br>");
+      }
+      return escapeHtml(fallbackTexto || "Serviço elétrico automotivo");
+    }
+
+    function selecionarFormaPagamento(opcao, btnEl) {
+      formaPagamentoSelecionada = opcao;
+      document.querySelectorAll(".btn-pagto").forEach(b => b.classList.remove("ativo"));
+      if (btnEl) btnEl.classList.add("ativo");
+    }
+
+    async function carregarOSPublica() {
+      const container = document.getElementById("areaOS");
+      formaPagamentoSelecionada = "";
+
+      if (!token) {
+        container.innerHTML = `<div class="msg-err">Link inválido: token da Ordem de Serviço não encontrado.</div>`;
+        return;
+      }
+
+      const { data, error } = await supabaseClient
+        .from("ordens_servico")
+        .select("*, clientes_veiculos(nome_cliente, placa, modelo_veiculo, ano)")
+        .eq("token_publico", token)
+        .single();
+
+      if (error || !data) {
+        container.innerHTML = `<div class="msg-err">Ordem de Serviço não encontrada ou link expirado.</div>`;
+        return;
+      }
+
+      osCarregada = data;
+      const v = data.clientes_veiculos || {};
+      const modLimpo = limparModelo(v.modelo_veiculo);
+      const jaAprovada = data.status === "Aprovada" || data.status === "Em Execução" || data.status === "Concluída / Pronta" || data.status === "Entregue";
+      const badgeClass = jaAprovada ? "b-aprovada" : "b-aguardando";
+      const itensHtml = formatarItens(data.itens_json, data.descricao_defeito);
+
+      container.innerHTML = `
+        <div class="info-box">
+          <div class="info-row"><strong>OS:</strong> #${escapeHtml(data.numero_os)}  |  <span class="badge ${badgeClass}">${escapeHtml(data.status)}</span></div>
+          <div class="info-row"><strong>Cliente:</strong> ${escapeHtml(v.nome_cliente || "-")}</div>
+          <div class="info-row"><strong>Veículo:</strong> ${escapeHtml(modLimpo || "-")} ${v.ano ? `(${escapeHtml(v.ano)})` : ""} — <strong>Placa:</strong> ${escapeHtml(v.placa || "-")}</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-row"><strong>Diagnóstico / Defeito:</strong><br>${escapeHtml(data.descricao_defeito || "-")}</div>
+          <div class="info-row" style="margin-top:10px"><strong>Peças e Serviços:</strong><br>${itensHtml}</div>
+          <div class="valor">Valor Total: R$ ${Number(data.valor_total || 0).toFixed(2)}</div>
+        </div>
+
+        ${
+          jaAprovada
+            ? `<div class="msg-ok">Esta Ordem de Serviço já foi confirmada. A Terra Auto Elétrica agradece a confiança!</div>`
+            : `
+              <label>Como será a forma de pagamento? (Toque na opção desejada)</label>
+              <div class="pagto-grid">
+                <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('PIX', this)">💠 PIX</button>
+                <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('Dinheiro', this)">💵 Dinheiro</button>
+                <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('Cartão de Débito', this)">💳 Cartão de Débito</button>
+                <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('Cartão de Crédito', this)">💳 Cartão de Crédito</button>
+                <button type="button" class="btn-pagto full-span" onclick="selecionarFormaPagamento('A combinar / Faturado', this)">🤝 A combinar / Faturado</button>
+              </div>
+
+              <label for="obsCliente">Observação do cliente (opcional)</label>
+              <textarea id="obsCliente" rows="2" placeholder="Ex: Aprovado, pode iniciar o serviço."></textarea>
+              <button class="btn-aprovar" id="btnAprovar" onclick="aprovarServico()">Aprovar Ordem de Serviço</button>
+              <div id="retornoAcao"></div>
+            `
+        }
+      `;
+    }
+
+    async function aprovarServico() {
+      if (!osCarregada || !token) return;
+      const btn = document.getElementById("btnAprovar");
+      const retorno = document.getElementById("retornoAcao");
+      const obs = (document.getElementById("obsCliente")?.value || "").trim();
+
+      if (!formaPagamentoSelecionada) {
+        retorno.innerHTML = `<div class="msg-err">Por favor, clique em uma das opções de forma de pagamento antes de aprovar.</div>`;
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Confirmando aprovação...";
+
+      const { error: errUpdate } = await supabaseClient
+        .from("ordens_servico")
+        .update({ status: "Aprovada" })
+        .eq("id", osCarregada.id)
+        .eq("token_publico", token);
+
+      if (errUpdate) {
+        btn.disabled = false;
+        btn.textContent = "Aprovar Ordem de Serviço";
+        retorno.innerHTML = `<div class="msg-err">Não foi possível registrar a aprovação: ${escapeHtml(errUpdate.message)}</div>`;
+        return;
+      }
+
+      const v = osCarregada.clientes_veiculos || {};
+      const partesMsg = [
+        `OS #${osCarregada.numero_os} aprovada pelo cliente (${v.nome_cliente || "Cliente"}) via link digital.`,
+        `Forma de pagamento: ${formaPagamentoSelecionada}.`
+      ];
+      if (obs) partesMsg.push(`Obs: ${obs}`);
+
+      await supabaseClient.from("historico_os").insert({
+        os_id: osCarregada.id,
+        tipo_evento: "Aprovação Cliente",
+        mensagem: partesMsg.join(" ")
+      });
+
+      await carregarOSPublica();
+    }
+
+    carregarOSPublica();
+  </script>
+</body>
+</html>
