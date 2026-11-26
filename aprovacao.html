@@ -76,7 +76,7 @@
   <script src="./config.js"></script>
   <script>
     const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    const token = (params.get("token") || "").trim();
     let osCarregada = null;
     let formaPagamentoSelecionada = "";
 
@@ -156,9 +156,11 @@
         }
 
         osCarregada = data;
-        const v = data.clientes_veiculos || {};
+        const v = Array.isArray(data.clientes_veiculos)
+          ? (data.clientes_veiculos[0] || {})
+          : (data.clientes_veiculos || {});
         const modLimpo = limparModelo(v.modelo_veiculo);
-        const jaAprovada = data.status === "Aprovada" || data.status === "Em Execução" || data.status === "Concluída / Pronta" || data.status === "Entregue";
+        const jaAprovada = ["Aprovada", "Em Execução", "Concluída / Pronta", "Entregue"].includes(data.status);
         const badgeClass = jaAprovada ? "b-aprovada" : "b-aguardando";
         const itensHtml = formatarItens(data.itens_json, data.descricao_defeito);
 
@@ -234,7 +236,9 @@
           return;
         }
 
-        const v = osCarregada.clientes_veiculos || {};
+        const v = Array.isArray(osCarregada.clientes_veiculos)
+          ? (osCarregada.clientes_veiculos[0] || {})
+          : (osCarregada.clientes_veiculos || {});
         const partesMsg = [
           `OS #${osCarregada.numero_os} aprovada pelo cliente (${v.nome_cliente || "Cliente"}) via link digital.`,
           `Forma de pagamento: ${formaPagamentoSelecionada}.`
