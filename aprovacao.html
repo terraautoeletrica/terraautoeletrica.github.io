@@ -113,6 +113,16 @@
       if (btnEl) btnEl.classList.add("ativo");
     }
 
+    function obterCliente() {
+      if (typeof supabaseClient !== "undefined" && supabaseClient) {
+        return supabaseClient;
+      }
+      if (typeof window.supabaseClient !== "undefined" && window.supabaseClient) {
+        return window.supabaseClient;
+      }
+      return null;
+    }
+
     async function carregarOSPublica() {
       const container = document.getElementById("areaOS");
       formaPagamentoSelecionada = "";
@@ -122,57 +132,72 @@
         return;
       }
 
-      const { data, error } = await supabaseClient
-        .from("ordens_servico")
-        .select("*, clientes_veiculos(nome_cliente, placa, modelo_veiculo, ano)")
-        .eq("token_publico", token)
-        .single();
-
-      if (error || !data) {
-        container.innerHTML = `<div class="msg-err">Ordem de Serviço não encontrada ou link expirado.</div>`;
+      const db = obterCliente();
+      if (!db) {
+        container.innerHTML = `<div class="msg-err">Erro de configuração: não foi possível inicializar o Supabase (verifique o config.js).</div>`;
         return;
       }
 
-      osCarregada = data;
-      const v = data.clientes_veiculos || {};
-      const modLimpo = limparModelo(v.modelo_veiculo);
-      const jaAprovada = data.status === "Aprovada" || data.status === "Em Execução" || data.status === "Concluída / Pronta" || data.status === "Entregue";
-      const badgeClass = jaAprovada ? "b-aprovada" : "b-aguardando";
-      const itensHtml = formatarItens(data.itens_json, data.descricao_defeito);
+      try {
+        const { data, error } = await db
+          .from("ordens_servico")
+          .select("*, clientes_veiculos(nome_cliente, placa, modelo_veiculo, ano)")
+          .eq("token_publico", token)
+          .maybeSingle();
 
-      container.innerHTML = `
-        <div class="info-box">
-          <div class="info-row"><strong>OS:</strong> #${escapeHtml(data.numero_os)}  |  <span class="badge ${badgeClass}">${escapeHtml(data.status)}</span></div>
-          <div class="info-row"><strong>Cliente:</strong> ${escapeHtml(v.nome_cliente || "-")}</div>
-          <div class="info-row"><strong>Veículo:</strong> ${escapeHtml(modLimpo || "-")} ${v.ano ? `(${escapeHtml(v.ano)})` : ""} — <strong>Placa:</strong> ${escapeHtml(v.placa || "-")}</div>
-        </div>
-
-        <div class="info-box">
-          <div class="info-row"><strong>Diagnóstico / Defeito:</strong><br>${escapeHtml(data.descricao_defeito || "-")}</div>
-          <div class="info-row" style="margin-top:10px"><strong>Peças e Serviços:</strong><br>${itensHtml}</div>
-          <div class="valor">Valor Total: R$ ${Number(data.valor_total || 0).toFixed(2)}</div>
-        </div>
-
-        ${
-          jaAprovada
-            ? `<div class="msg-ok">Esta Ordem de Serviço já foi confirmada. A Terra Auto Elétrica agradece a confiança!</div>`
-            : `
-              <label>Como será a forma de pagamento? (Toque na opção desejada)</label>
-              <div class="pagto-grid">
-                <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('PIX', this)">💠 PIX</button>
-                <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('Dinheiro', this)">💵 Dinheiro</button>
-                <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('Cartão de Débito', this)">💳 Cartão de Débito</button>
-                <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('Cartão de Crédito', this)">💳 Cartão de Crédito</button>
-                <button type="button" class="btn-pagto full-span" onclick="selecionarFormaPagamento('A combinar / Faturado', this)">🤝 A combinar / Faturado</button>
-              </div>
-
-              <label for="obsCliente">Observação do cliente (opcional)</label>
-              <textarea id="obsCliente" rows="2" placeholder="Ex: Aprovado, pode iniciar o serviço."></textarea>
-              <button class="btn-aprovar" id="btnAprovar" onclick="aprovarServico()">Aprovar Ordem de Serviço</button>
-              <div id="retornoAcao"></div>
-            `
+        if (error) {
+          container.innerHTML = `<div class="msg-err">Erro ao consultar OS: ${escapeHtml(error.message)}</div>`;
+          return;
         }
-      `;
+
+        if (!data) {
+          container.innerHTML = `<div class="msg-err">Ordem de Serviço não encontrada ou link expirado.</div>`;
+          return;
+        }
+
+        osCarregada = data;
+        const v = data.clientes_veiculos || {};
+        const modLimpo = limparModelo(v.modelo_veiculo);
+        const jaAprovada = data.status === "Aprovada" || data.status === "Em Execução" || data.status === "Concluída / Pronta" || data.status === "Entregue";
+        const badgeClass = jaAprovada ? "b-aprovada" : "b-aguardando";
+        const itensHtml = formatarItens(data.itens_json, data.descricao_defeito);
+
+        container.innerHTML = `
+          <div class="info-box">
+            <div class="info-row"><strong>OS:</strong> #${escapeHtml(data.numero_os)}  |  <span class="badge ${badgeClass}">${escapeHtml(data.status)}</span></div>
+            <div class="info-row"><strong>Cliente:</strong> ${escapeHtml(v.nome_cliente || "-")}</div>
+            <div class="info-row"><strong>Veículo:</strong> ${escapeHtml(modLimpo || "-")} ${v.ano ? `(${escapeHtml(v.ano)})` : ""} — <strong>Placa:</strong> ${escapeHtml(v.placa || "-")}</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-row"><strong>Diagnóstico / Defeito:</strong><br>${escapeHtml(data.descricao_defeito || "-")}</div>
+            <div class="info-row" style="margin-top:10px"><strong>Peças e Serviços:</strong><br>${itensHtml}</div>
+            <div class="valor">Valor Total: R$ ${Number(data.valor_total || 0).toFixed(2)}</div>
+          </div>
+
+          ${
+            jaAprovada
+              ? `<div class="msg-ok">Esta Ordem de Serviço já foi confirmada. A Terra Auto Elétrica agradece a confiança!</div>`
+              : `
+                <label>Como será a forma de pagamento? (Toque na opção desejada)</label>
+                <div class="pagto-grid">
+                  <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('PIX', this)">💠 PIX</button>
+                  <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('Dinheiro', this)">💵 Dinheiro</button>
+                  <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('Cartão de Débito', this)">💳 Cartão de Débito</button>
+                  <button type="button" class="btn-pagto" onclick="selecionarFormaPagamento('Cartão de Crédito', this)">💳 Cartão de Crédito</button>
+                  <button type="button" class="btn-pagto full-span" onclick="selecionarFormaPagamento('A combinar / Faturado', this)">🤝 A combinar / Faturado</button>
+                </div>
+
+                <label for="obsCliente">Observação do cliente (opcional)</label>
+                <textarea id="obsCliente" rows="2" placeholder="Ex: Aprovado, pode iniciar o serviço."></textarea>
+                <button class="btn-aprovar" id="btnAprovar" onclick="aprovarServico()">Aprovar Ordem de Serviço</button>
+                <div id="retornoAcao"></div>
+              `
+          }
+        `;
+      } catch (err) {
+        container.innerHTML = `<div class="msg-err">Falha inesperada ao carregar OS: ${escapeHtml(err.message || String(err))}</div>`;
+      }
     }
 
     async function aprovarServico() {
@@ -186,36 +211,48 @@
         return;
       }
 
-      btn.disabled = true;
-      btn.textContent = "Confirmando aprovação...";
-
-      const { error: errUpdate } = await supabaseClient
-        .from("ordens_servico")
-        .update({ status: "Aprovada" })
-        .eq("id", osCarregada.id)
-        .eq("token_publico", token);
-
-      if (errUpdate) {
-        btn.disabled = false;
-        btn.textContent = "Aprovar Ordem de Serviço";
-        retorno.innerHTML = `<div class="msg-err">Não foi possível registrar a aprovação: ${escapeHtml(errUpdate.message)}</div>`;
+      const db = obterCliente();
+      if (!db) {
+        retorno.innerHTML = `<div class="msg-err">Erro de configuração do Supabase ao enviar aprovação.</div>`;
         return;
       }
 
-      const v = osCarregada.clientes_veiculos || {};
-      const partesMsg = [
-        `OS #${osCarregada.numero_os} aprovada pelo cliente (${v.nome_cliente || "Cliente"}) via link digital.`,
-        `Forma de pagamento: ${formaPagamentoSelecionada}.`
-      ];
-      if (obs) partesMsg.push(`Obs: ${obs}`);
+      btn.disabled = true;
+      btn.textContent = "Confirmando aprovação...";
 
-      await supabaseClient.from("historico_os").insert({
-        os_id: osCarregada.id,
-        tipo_evento: "Aprovação Cliente",
-        mensagem: partesMsg.join(" ")
-      });
+      try {
+        const { error: errUpdate } = await db
+          .from("ordens_servico")
+          .update({ status: "Aprovada" })
+          .eq("id", osCarregada.id)
+          .eq("token_publico", token);
 
-      await carregarOSPublica();
+        if (errUpdate) {
+          btn.disabled = false;
+          btn.textContent = "Aprovar Ordem de Serviço";
+          retorno.innerHTML = `<div class="msg-err">Não foi possível registrar a aprovação: ${escapeHtml(errUpdate.message)}</div>`;
+          return;
+        }
+
+        const v = osCarregada.clientes_veiculos || {};
+        const partesMsg = [
+          `OS #${osCarregada.numero_os} aprovada pelo cliente (${v.nome_cliente || "Cliente"}) via link digital.`,
+          `Forma de pagamento: ${formaPagamentoSelecionada}.`
+        ];
+        if (obs) partesMsg.push(`Obs: ${obs}`);
+
+        await db.from("historico_os").insert({
+          os_id: osCarregada.id,
+          tipo_evento: "Aprovação Cliente",
+          mensagem: partesMsg.join(" ")
+        });
+
+        await carregarOSPublica();
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = "Aprovar Ordem de Serviço";
+        retorno.innerHTML = `<div class="msg-err">Erro ao confirmar aprovação: ${escapeHtml(err.message || String(err))}</div>`;
+      }
     }
 
     carregarOSPublica();
